@@ -22,7 +22,9 @@ import Card from '../components/Card.astro';
 				style=
 				"width: auto;
 				float: right;
+				margin: 10px 10px 10px 10px;
 				border-radius: 6px;
+				display: inline-block;
 				"
 				>Login
 			</button>
@@ -91,6 +93,8 @@ import Card from '../components/Card.astro';
 								onclick="document.getElementById('signup-form').style.display='none'"
 								class="close"
 								title="close modal"
+								style="
+									color: #fefefe;"
 								>&times
 							</span>
 
@@ -136,36 +140,44 @@ import Card from '../components/Card.astro';
 				</div>
 			</section>
 
-			<section class="left">
-				<h1>Left</h1>
-				<div class="race-details">
+			<section class="flex-container">
 
-				</div>
-			</section>
+				<section class="left">
+					<h1>Left</h1>
+					<div class="race-details">
+	
+					</div>
+				</section>
+	
+				<section class="middle">
+					<h1>Middle</h1>
+					<div class="animation-box">
+	
+					</div>
+				</section>
 
-			<section class="middle">
-				<h1>Middle</h1>
-				<div class="animation-box">
+				<section class="right">
+					<h1>Right</h1>
+					<div class="race-results">
+	
+					</div>
+				</section>
 
-				</div>
 			</section>
 
 			<section class="bottom">
-				<h1>BOTTOM</h1>
+				<h1>Bottom</h1>
 				<div class="all results">
 					<!-- needs javascript to add new section for each new race result -->
 		
 				<div>
 			</section>
-			
-			<section class="right">
-				<h1>Right</h1>
-				<div class="race-results">
-
-				</div>
-			</section>
-
+	
 		</main>
+
+		<footer>
+			<h1>Footer</h1>
+		</footer>
 	
 	</body>
 </Layout>
@@ -178,6 +190,7 @@ import Card from '../components/Card.astro';
 	}
 	h1{
 		color: #fefefe;
+		display: inline-block;
 	}
 	.timer-box{
 		width: 100%;
@@ -185,30 +198,39 @@ import Card from '../components/Card.astro';
 		border: 2px solid #fa8585;
 		padding: 10% auto;
 	}
+	.flex-container{
+		display: flex;
+		flex-direction: row;
+		height: 200px;
+	}
 	.left{
-		position: absolute;
 		width: 20%;
-		height: 70%;
 		margin: 10px auto;
 		border: 2px solid #85fad7;
 		padding:10% auto;
 	}
 	.right{
-		position: absolute;
-		right: 0;
 		width: 20%;
-		height: 70%;
 		margin: 10px auto;
 		border: 2px solid #85fa85;
 		padding: 10% auto;
 	}
 	.middle{
-		position: absolute;
-		left: 50%;
 		width: 50%;
-		height: 80%;
 		margin: 10px auto;
 		border: 2px solid #faea85;
+		padding: 10% auto;
+	}
+	.bottom{
+		width: 100%;
+		margin: 10px auto;
+		border: 2px solid #d185fa;
+		padding: 10% auto;
+	}
+	footer{
+		width: 100%;
+		margin: 10px auto;
+		border: 2px solid #ed9a53;
 		padding: 10% auto;
 	}
 	/* styling for login form */
