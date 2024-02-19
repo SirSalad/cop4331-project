@@ -138,9 +138,9 @@ import Card from '../components/Card.astro';
 			<script>
 				//needs url of websocket server
 				//wss is secure form of websockets, use that instead for realsies
-				const ws = new WebSocket("ws://localhost:4321");
+				const wss = new WebSocket("ws://localhost:8082");
 				//listening for connection to server
-				ws.addEventListener("open", ()=> {
+				wss.addEventListener("open", ()=> {
 					console.log("We are connected");
 				});
 			</script>
@@ -158,10 +158,7 @@ import Card from '../components/Card.astro';
 					<h1>Left</h1>
 					<div class="race-details">
 						<script>
-							const ws = new WebSocket("ws://localhost:4321");
-							ws.addEventListener("open", ()=> {
-								console.log("race details is connected");
-							});
+							
 						</script>
 	
 					</div>
