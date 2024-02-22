@@ -6,14 +6,27 @@ const wss = new WebSocket.Server({port:8082});
 wss.on("connection", ws => {
     console.log("New client connected");
 
+    //receives a message from the browser and prints it in the console
+    //sends a confirmation message back
+    ws.on("message", function incoming(message){
+        //without the .toString() method we just get a regular buffer object, which we cant read
+        //JSON.parse() does not need .toString()
+        //console.log(JSON.parse(message));
+        const data = JSON.parse(message);
+        console.log(data.x, data.y);
+        //sending a message to the client
+        ws.send("I got your message");
+    });
+
     ws.on("close", ws => {
         console.log("Client disconnected");
     });
 });
 
 //when we receive messages, do these things
+/*
 wss.onmessage = function(event){
-    if(typeOf event.data === String){
+    if(typeOf(event.data) === String){
         //create a json object
         var jsonObject = JSON.parse(event.data);
         var name = jsonObject.name;
@@ -22,3 +35,4 @@ wss.onmessage = function(event){
         console.log("recieved data");
     }
 }
+*/
