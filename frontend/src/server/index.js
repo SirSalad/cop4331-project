@@ -12,10 +12,12 @@ wss.on("connection", ws => {
         //without the .toString() method we just get a regular buffer object, which we cant read
         //JSON.parse() does not need .toString()
         //console.log(JSON.parse(message));
+
+        //this creates a JSON object out of the message and puts its variables on the console
         const data = JSON.parse(message);
         console.log(data.x, data.y);
         //sending a message to the client
-        ws.send("I got your message");
+        ws.send("received: " + data.x +" " + data.y);
     });
 
     ws.on("close", ws => {
