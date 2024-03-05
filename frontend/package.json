@@ -2,6 +2,7 @@
   "name": "cop4331-project",
   "type": "module",
   "version": "0.0.1",
+  "main": "index.js",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
