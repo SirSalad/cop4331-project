@@ -6,13 +6,25 @@ const wss = new WebSocket.Server({port:8082});
 wss.on("connection", ws => {
     console.log("New client connected");
 
-    ws.send(JSON.stringify({
-        weather: "sunny",
-        track: "sand",
-        horse1: "horse1",
-        horse2: "horse2",
-        horse3: "horse3"
-    }));
+    const data = [
+        {
+            weather: "sunny",
+            track: "sand",
+            time: "night"
+        },
+        {
+            horse: "horse1",
+            weight: 100,
+            color: "black"
+        },
+        {
+            horse: "horse2",
+            weight: 200,
+            color: "white"
+        }
+    ]
+
+    ws.send(JSON.stringify(data));
 
     //receives a message from the browser and prints it in the console
     //sends a confirmation message back

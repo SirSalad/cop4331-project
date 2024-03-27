@@ -153,6 +153,11 @@ import Card from '../components/Card.astro';
 						<h1>Left</h1>
 						<div id="race-details">
 							
+							<table id="jsonTable">
+								<tbody>
+								  <!-- Table body will be dynamically populated -->
+								</tbody>
+							  </table>
 						
 		
 						</div>
@@ -215,14 +220,39 @@ import Card from '../components/Card.astro';
 				//event is an object which has properties, event.data would be the message that was received
 				console.log(event);
 
-				function convert(){
-					let jsonData = JSON.parse(event.data);
-					let element = document.getElementById("race-details");
-					let table = document.createElement("table");
+				function convert() {
+    				let jsonData = JSON.parse(event.data);
+					let tbody = document.querySelector("#jsonTable tbody");
+    				let element = document.getElementById("race-details");
+    				let table = document.createElement("table");
 
-					let columns = Object.keys(jsonData);
+    				jsonData.forEach((obj: any) => {
+      					for (const key in obj) {
+							//fill row with key then data
+        					if (obj.hasOwnProperty(key)) {
+								//make new row
+								const row = document.createElement('tr');
+          						const keyCell = document.createElement('td');
+         						const valueCell = document.createElement('td');
+
+          						keyCell.textContent = key;
+          						valueCell.textContent = obj[key];
+
+          						row.appendChild(keyCell);
+          						row.appendChild(valueCell);
+								table.appendChild(row);
+        					}
+     					}
+    				});
+					tbody!.appendChild(table);
+  				}
+				convert();
+
+				/*
+
+					let columns = Object.keys(jsonData[0]);
 					let thead = document.createElement("thead");
-					 let tr = document.createElement("tr");
+					let tr = document.createElement("tr");
 
 					columns.forEach((item) => {
 						let th = document.createElement("th");
@@ -248,7 +278,7 @@ import Card from '../components/Card.astro';
 					}
 					element!.appendChild(table);
 					
-					/*
+					
 					jsonData.forEach((item: string) => {
 						let tr = document.createElement("tr");
 						let vals = Object.values(item);
@@ -261,13 +291,9 @@ import Card from '../components/Card.astro';
 						table.appendChild(tr);
 					});
 					*/
-					
-				}
 
-				convert();
 			});
 
-			
 		</script>
 
 
@@ -301,6 +327,10 @@ import Card from '../components/Card.astro';
 			margin: 10px auto;
 			border: 2px solid #85fad7;
 			padding:10% auto;
+		}
+		table, th, td{
+			background-color: #fefefe;
+			border: solid;
 		}
 		.right{
 			width: 20%;
