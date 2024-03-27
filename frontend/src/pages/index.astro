@@ -139,27 +139,6 @@ import Card from '../components/Card.astro';
 			</header>
 
 			<main>
-				<script>
-					//needs url of websocket server
-					//wss is secure form of websockets, use that instead for realsies
-					const ws = new WebSocket("ws://localhost:8082");
-					//listening for connection to server
-					ws.addEventListener("open", e=> {
-						console.log("We are connected");
-						
-						//sends a message to the server (on connection)
-						ws.send(JSON.stringify({
-							x: 254,
-							y: 100
-						}));
-					});
-
-					//receives message and prints it to console
-					ws.addEventListener("message", event=> {
-						//event is an object which has properties, event.data would be the message that was received
-						console.log(event);
-					});
-				</script>
 				<!-- timer -->
 				<section class="timer-box">
 					<h1>Timer box</h1>
@@ -172,10 +151,9 @@ import Card from '../components/Card.astro';
 					<!-- current race info. Includes all horses and their info along with space to bet on each horse -->
 					<section class="left">
 						<h1>Left</h1>
-						<div class="race-details">
-							<script>
-								
-							</script>
+						<div id="race-details">
+							
+						
 		
 						</div>
 					</section>
@@ -189,8 +167,8 @@ import Card from '../components/Card.astro';
 
 					<section class="right">
 						<h1>Right</h1>
-						<div class="race-results">
-		
+						<div id="race-results">
+					
 						</div>
 					</section>
 
@@ -211,6 +189,89 @@ import Card from '../components/Card.astro';
 			</footer>
 		</div>
 	
+
+		<script>
+			//needs url of websocket server
+			//wss is secure form of websockets, use that instead for realsies
+			const ws = new WebSocket("ws://localhost:8082");
+
+			//listening for connection to server
+			ws.addEventListener("open", e=> {
+				//on connection, display this message
+				console.log("We are connected");
+				
+				//sends a message to the server (on connection)
+				//stringify converts anything to a json object
+				/*
+				ws.send(JSON.stringify({
+					x: 254,
+					y: 100
+				}));
+				*/
+			});
+
+			//receives message and prints it to console
+			ws.addEventListener("message", event=> {
+				//event is an object which has properties, event.data would be the message that was received
+				console.log(event);
+
+				function convert(){
+					let jsonData = JSON.parse(event.data);
+					let element = document.getElementById("race-details");
+					let table = document.createElement("table");
+
+					let columns = Object.keys(jsonData);
+					let thead = document.createElement("thead");
+					 let tr = document.createElement("tr");
+
+					columns.forEach((item) => {
+						let th = document.createElement("th");
+						th.innerText = item; 
+						tr.appendChild(th);
+					});
+					thead.appendChild(tr);
+					table.append(tr);
+
+					for(let key in jsonData){
+						if(jsonData.hasOwnProperty(key)){
+							let value = jsonData[key];
+							let tr = document.createElement("tr");
+							let vals = Object.values(key);
+
+							vals.forEach((elem) => {
+							   let td = document.createElement("td");
+							   td.innerText = elem; // Set the value as the text of the table cell
+							   tr.appendChild(td); // Append the table cell to the table row
+						});
+						table.appendChild(tr);
+						}
+					}
+					element!.appendChild(table);
+					
+					/*
+					jsonData.forEach((item: string) => {
+						let tr = document.createElement("tr");
+						let vals = Object.values(item);
+
+						vals.forEach((elem) => {
+							   let td = document.createElement("td");
+							   td.innerText = elem; // Set the value as the text of the table cell
+							   tr.appendChild(td); // Append the table cell to the table row
+						});
+						table.appendChild(tr);
+					});
+					*/
+					
+				}
+
+				convert();
+			});
+
+			
+		</script>
+
+
+
 	</body>
 </Layout>
 
