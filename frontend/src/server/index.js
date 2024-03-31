@@ -2,28 +2,89 @@ const WebSocket = require("ws");
 
 const wss = new WebSocket.Server({port:8082});
 
+const data = [
+    {
+        track: "",
+        weather: ""
+    },
+    {
+        name: "",
+        maneStyle: "",
+        race:"",
+        injuries: "",
+        tailLength: ""
+    },
+    {
+        name: "",
+        maneStyle: "",
+        race:"",
+        injuries: "",
+        tailLength: ""
+    },
+    {
+        name: "",
+        maneStyle: "",
+        race:"",
+        injuries: "",
+        tailLength: ""
+    },
+    {
+        name: "",
+        maneStyle: "",
+        race:"",
+        injuries: "",
+        tailLength: ""
+    },
+    {
+        name: "",
+        maneStyle: "",
+        race:"",
+        injuries: "",
+        tailLength: ""
+    },
+    {
+        name: "",
+        maneStyle: "",
+        race:"",
+        injuries: "",
+        tailLength: ""
+    },
+    {
+        name: "",
+        maneStyle: "",
+        race:"",
+        injuries: "",
+        tailLength: ""
+    },
+    {
+        name: "",
+        maneStyle: "",
+        race:"",
+        injuries: "",
+        tailLength: ""
+    }
+    
+]
+
+const data2 = [
+    {
+        track: "",
+        weather: ""
+    },
+    {
+        winner: "",
+        maneStyle: "",
+        race: "",
+        injuries: "",
+        tailLength: ""
+    }
+]
+
 //when the server starts up, do this
 wss.on("connection", ws => {
     console.log("New client connected");
 
-    const data = [
-        {
-            weather: "sunny",
-            track: "sand",
-            time: "night"
-        },
-        {
-            horse: "horse1",
-            weight: 100,
-            color: "black"
-        },
-        {
-            horse: "horse2",
-            weight: 200,
-            color: "white"
-        }
-    ]
-
+    ws.send(JSON.stringify(data2));
     ws.send(JSON.stringify(data));
 
     //receives a message from the browser and prints it in the console
@@ -44,17 +105,3 @@ wss.on("connection", ws => {
         console.log("Client disconnected");
     });
 });
-
-//when we receive messages, do these things
-/*
-wss.onmessage = function(event){
-    if(typeOf(event.data) === String){
-        //create a json object
-        var jsonObject = JSON.parse(event.data);
-        var name = jsonObject.name;
-        var stat = jsonObject.stat;
-
-        console.log("recieved data");
-    }
-}
-*/

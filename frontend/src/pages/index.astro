@@ -18,7 +18,7 @@ import Card from '../components/Card.astro';
 
 			<header>
 				<h1>Header</h1>
-				<!-- will contain logo, title, and login button -->
+				<!-- Will contain logo, title, and login button -->
 
 				<!-- login button  -->
 				<button 
@@ -143,6 +143,7 @@ import Card from '../components/Card.astro';
 				<section class="timer-box">
 					<h1>Timer box</h1>
 					<div class="timer">
+						<!-- Tiimer for how long until the next race -->
 
 					</div>
 				</section>
@@ -153,7 +154,7 @@ import Card from '../components/Card.astro';
 						<h1>Left</h1>
 						<div id="race-details">
 							
-							<table id="jsonTable">
+							<table id="raceDetailsTable">
 								<tbody>
 								  <!-- Table body will be dynamically populated -->
 								</tbody>
@@ -166,6 +167,7 @@ import Card from '../components/Card.astro';
 					<section class="middle">
 						<h1>Middle</h1>
 						<div class="animation-box">
+							<!-- No idea how to do whats going to be here -->
 		
 						</div>
 					</section>
@@ -173,7 +175,12 @@ import Card from '../components/Card.astro';
 					<section class="right">
 						<h1>Right</h1>
 						<div id="race-results">
-					
+							<!-- Table that will show the previous race details, the winner of the race, and whether or not the user won -->
+							<table id="lastRaceResultTable">
+								<tbody>
+								  <!-- Table body will be dynamically populated -->
+								</tbody>
+							  </table>
 						</div>
 					</section>
 
@@ -183,6 +190,19 @@ import Card from '../components/Card.astro';
 					<h1>Bottom</h1>
 					<div class="all results">
 						<!-- needs javascript to add new section for each new race result -->
+						<table id="allResultsTable">
+							<thead>
+								<th> Winning Horse </th>
+								<th> Track </th>
+								<th> Weather </th>
+							</thead>
+
+							<tbody>
+								<!-- dynamically populated with a file containing all the previous winners, probably from database, on server connection -->
+								<!-- New row is added to the top everytime a race happens and winners are displayed -->
+							</tbody>
+							
+						</table>
 			
 					<div>
 				</section>
@@ -191,6 +211,7 @@ import Card from '../components/Card.astro';
 
 			<footer>
 				<h1>Footer</h1>
+				<!-- idk if we need this, its just here -->
 			</footer>
 		</div>
 	
@@ -215,20 +236,21 @@ import Card from '../components/Card.astro';
 				*/
 			});
 
-			//receives message and prints it to console
+			//When a message is received
 			ws.addEventListener("message", event=> {
 				//event is an object which has properties, event.data would be the message that was received
 				console.log(event);
 
-				function convert() {
+				//dynamically creates a table for the upcoming race details using json objects from the HorseRace.java code running on its own server
+				function makeRaceDetailsTable() {
     				let jsonData = JSON.parse(event.data);
-					let tbody = document.querySelector("#jsonTable tbody");
-    				let element = document.getElementById("race-details");
+					//this is the table we want to populate
+					let tbody = document.querySelector("#raceDetailsTable tbody");
     				let table = document.createElement("table");
 
     				jsonData.forEach((obj: any) => {
+						//each key and value will be in their own row
       					for (const key in obj) {
-							//fill row with key then data
         					if (obj.hasOwnProperty(key)) {
 								//make new row
 								const row = document.createElement('tr');
@@ -238,59 +260,71 @@ import Card from '../components/Card.astro';
           						keyCell.textContent = key;
           						valueCell.textContent = obj[key];
 
+								//row consists of key and value
           						row.appendChild(keyCell);
           						row.appendChild(valueCell);
+								//table consists of all rows
 								table.appendChild(row);
         					}
      					}
     				});
 					tbody!.appendChild(table);
   				}
-				convert();
 
-				/*
+				//Almost exactly the same as the last table maker, but chooses a different spot on the page to make the table
+				function makeLastRaceResultTable(){
+					let jsonData = JSON.parse(event.data);
+					//this is the table we want to populate
+					let tbody = document.querySelector("#lastRaceResultTable tbody");
+    				let table = document.createElement("table");
 
-					let columns = Object.keys(jsonData[0]);
-					let thead = document.createElement("thead");
-					let tr = document.createElement("tr");
+    				jsonData.forEach((obj: any) => {
+						//each key and value will be in their own row
+      					for (const key in obj) {
+        					if (obj.hasOwnProperty(key)) {
+								//make new row
+								const row = document.createElement('tr');
+          						const keyCell = document.createElement('td');
+         						const valueCell = document.createElement('td');
 
-					columns.forEach((item) => {
-						let th = document.createElement("th");
-						th.innerText = item; 
-						tr.appendChild(th);
-					});
-					thead.appendChild(tr);
-					table.append(tr);
+          						keyCell.textContent = key;
+          						valueCell.textContent = obj[key];
 
-					for(let key in jsonData){
-						if(jsonData.hasOwnProperty(key)){
-							let value = jsonData[key];
-							let tr = document.createElement("tr");
-							let vals = Object.values(key);
+								//row consists of key and value
+          						row.appendChild(keyCell);
+          						row.appendChild(valueCell);
+								//table consists of all rows
+								table.appendChild(row);
+        					}
+     					}
+    				});
+					tbody!.appendChild(table);
+				}
 
-							vals.forEach((elem) => {
-							   let td = document.createElement("td");
-							   td.innerText = elem; // Set the value as the text of the table cell
-							   tr.appendChild(td); // Append the table cell to the table row
-						});
-						table.appendChild(tr);
-						}
-					}
-					element!.appendChild(table);
-					
-					
-					jsonData.forEach((item: string) => {
-						let tr = document.createElement("tr");
-						let vals = Object.values(item);
+				//creates the table with all the previous race results on server startup
+				function makeAllRaceResultsTable(){
 
-						vals.forEach((elem) => {
-							   let td = document.createElement("td");
-							   td.innerText = elem; // Set the value as the text of the table cell
-							   tr.appendChild(td); // Append the table cell to the table row
-						});
-						table.appendChild(tr);
-					});
-					*/
+				}
+
+				//adds a new row to the top of the allRaceResultsTable each time a winner is announced
+				function addNewRow(){
+
+				}
+
+
+
+				//call makeRaceDetailsTable() on message event if the message does not contain the field for winner
+				//this means the message is giving us race details, NOT the results of a race
+				if(!event.data.includes("winner")){
+					makeRaceDetailsTable();
+				}
+				//the only other message we will be getting (so far 3/31/24) is one that tells us the winner
+				else{
+					makeLastRaceResultTable();
+					addNewRow();
+				}
+
+
 
 			});
 
@@ -329,13 +363,9 @@ import Card from '../components/Card.astro';
 			border: 2px solid #85fad7;
 			padding:10% auto;
 		}
-		table, th, td{
+		table, tr, td{
 			background-color: #fefefe;
 			border: solid;
-		}
-		.race-details{
-			self-align: center;
-
 		}
 		.right{
 			width: 20%;
