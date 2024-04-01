@@ -1,0 +1,18 @@
+ktor:
+  deployment:
+    port: 8080
+  application:
+    modules:
+      - "edu.ucf.cop4331project.BackendApplication.main"
+
+jwt:
+  secret: "secret"
+  issuer: "http://0.0.0.0:8080/"
+
+valid-transaction-sources:
+  - "localhost"
+
+datasource:
+  jdbc-url: "jdbc:postgresql://localhost:5432/postgres"
+  username: "postgres"
+  password: "postgres"
