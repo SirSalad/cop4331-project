@@ -17,8 +17,10 @@ import Card from '../components/Card.astro';
 		<div id="page">
 
 			<header>
-				<h1>Header</h1>
 				<!-- Will contain logo, title, and login button -->
+				
+				<img src="logo.png" alt="Hoof Hustler logo">
+				
 
 				<!-- login button  -->
 				<button 
@@ -338,8 +340,14 @@ import Card from '../components/Card.astro';
 	<style>
 		header{
 			width: 100%;
+			height: auto;
 			border: 2px solid #fefefe;
 			padding: 10% auto;
+			text-align: center;
+		}
+		header img{
+			width: 50%;
+			max-height: 8%;
 		}
 		h1{
 			color: #fefefe;
