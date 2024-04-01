@@ -3,10 +3,6 @@ plugins {
     id("io.ktor.plugin") version "2.3.9"
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     // Commons
     implementation("edu.ucf.cop4331project:jvm-common")
