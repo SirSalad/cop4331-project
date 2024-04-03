@@ -4,79 +4,79 @@ const wss = new WebSocket.Server({port:8082});
 
 const data = [
     {
-        track: "",
-        weather: ""
+        track: "Sand",
+        weather: "Rain"
     },
     {
-        name: "",
-        maneStyle: "",
-        race:"",
-        injuries: "",
-        tailLength: ""
+        name: "horse1",
+        maneStyle: "mane1",
+        race:"race1",
+        injuries: 3,
+        tailLength: 12
     },
     {
-        name: "",
-        maneStyle: "",
-        race:"",
-        injuries: "",
-        tailLength: ""
+        name: "horse2",
+        maneStyle: "mane2",
+        race:"race2",
+        injuries: 4,
+        tailLength: 9
     },
     {
-        name: "",
-        maneStyle: "",
-        race:"",
-        injuries: "",
-        tailLength: ""
+        name: "horse3",
+        maneStyle: "mane3",
+        race:"race3",
+        injuries: 2,
+        tailLength: 10
     },
     {
-        name: "",
-        maneStyle: "",
-        race:"",
-        injuries: "",
-        tailLength: ""
+        name: "horse4",
+        maneStyle: "mane4",
+        race:"race4",
+        injuries: 1,
+        tailLength: 12
     },
     {
-        name: "",
-        maneStyle: "",
-        race:"",
-        injuries: "",
-        tailLength: ""
+        name: "horse5",
+        maneStyle: "mane5",
+        race:"race5",
+        injuries: 1,
+        tailLength: 10
     },
     {
-        name: "",
-        maneStyle: "",
-        race:"",
-        injuries: "",
-        tailLength: ""
+        name: "horse6",
+        maneStyle: "mane6",
+        race:"race6",
+        injuries: 2,
+        tailLength: 8
     },
     {
-        name: "",
-        maneStyle: "",
-        race:"",
-        injuries: "",
-        tailLength: ""
+        name: "horse7",
+        maneStyle: "mane7",
+        race:"race7",
+        injuries: 0,
+        tailLength: 13
     },
     {
-        name: "",
-        maneStyle: "",
-        race:"",
-        injuries: "",
-        tailLength: ""
+        name: "horse8",
+        maneStyle: "mane8",
+        race:"race8",
+        injuries: 2,
+        tailLength: 8
     }
     
 ]
 
 const data2 = [
     {
-        track: "",
-        weather: ""
+        track: "Sand",
+        weather: "Rain"
     },
     {
-        winner: "",
-        maneStyle: "",
-        race: "",
-        injuries: "",
-        tailLength: ""
+        winner: "horse6",
+        maneStyle: "mane6",
+        race: "race6",
+        injuries: 2,
+        tailLength: 8
     }
 ]
 

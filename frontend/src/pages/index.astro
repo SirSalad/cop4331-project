@@ -10,7 +10,7 @@ import Card from '../components/Card.astro';
 <html>
 <Layout title="Welcome to Astro.">
 	<head>
-		
+		<link rel="stylesheet" href="style.css">
 	</head>
 
 	<body>
@@ -142,23 +142,27 @@ import Card from '../components/Card.astro';
 
 			<main>
 				<!-- timer -->
-				<section class="timer-box">
+				<section id="timer-box">
 					<h1>Timer box</h1>
-					<div class="timer">
+					<div id="timer">
 						<!-- Tiimer for how long until the next race -->
 
 					</div>
 				</section>
 
-				<section class="flex-container">
+				<section id="flex-container">
 					<!-- current race info. Includes all horses and their info along with space to bet on each horse -->
-					<section class="left">
+					<section class="sidebox">
 						<h1>Left</h1>
 						<div id="race-details">
-							
+							<table id="raceTrackWeatherTable">
+								<tbody>
+									<!--dynamically populated-->
+								</tbody>
+							</table>
 							<table id="raceDetailsTable">
 								<tbody>
-								  <!-- Table body will be dynamically populated -->
+								  <!--dynamically populated-->
 								</tbody>
 							  </table>
 						
@@ -166,21 +170,26 @@ import Card from '../components/Card.astro';
 						</div>
 					</section>
 		
-					<section class="middle">
+					<section id="middle">
 						<h1>Middle</h1>
-						<div class="animation-box">
+						<div id="animation-box">
 							<!-- No idea how to do whats going to be here -->
 		
 						</div>
 					</section>
 
-					<section class="right">
+					<section class="sidebox">
 						<h1>Right</h1>
 						<div id="race-results">
 							<!-- Table that will show the previous race details, the winner of the race, and whether or not the user won -->
+							<table id="lastRaceTrackWeatherTable">
+								<tbody>
+									<!--dynamically populated -->
+								</tbody>
+							</table>
 							<table id="lastRaceResultTable">
 								<tbody>
-								  <!-- Table body will be dynamically populated -->
+								  <!--dynamically populated-->
 								</tbody>
 							  </table>
 						</div>
@@ -188,9 +197,9 @@ import Card from '../components/Card.astro';
 
 				</section>
 
-				<section class="bottom">
+				<section id="bottom">
 					<h1>Bottom</h1>
-					<div class="all results">
+					<div id="all results">
 						<!-- needs javascript to add new section for each new race result -->
 						<table id="allResultsTable">
 							<thead>
@@ -219,114 +228,202 @@ import Card from '../components/Card.astro';
 	
 
 		<script>
-			//needs url of websocket server
-			//wss is secure form of websockets, use that instead for realsies
-			const ws = new WebSocket("ws://localhost:8082");
 
-			//listening for connection to server
-			ws.addEventListener("open", e=> {
-				//on connection, display this message
-				console.log("We are connected");
+
+			document.addEventListener("DOMContentLoaded", e=> {
+				//needs url of websocket server
+				//wss is secure form of websockets, use that instead for realsies
+				const ws = new WebSocket("ws://localhost:8082");
+
+				//listening for connection to server
+				ws.addEventListener("open", e=> {
+					//on connection, display this message
+					console.log("We are connected");
 				
-				//sends a message to the server (on connection)
-				//stringify converts anything to a json object
-				/*
-				ws.send(JSON.stringify({
-					x: 254,
-					y: 100
-				}));
-				*/
-			});
+					//sends a message to the server (on connection)
+					//stringify converts anything to a json object
+					/*
+					ws.send(JSON.stringify({
+						x: 254,
+						y: 100
+					}));
+					*/
+				});
 
-			//When a message is received
-			ws.addEventListener("message", event=> {
-				//event is an object which has properties, event.data would be the message that was received
-				console.log(event);
 
-				//dynamically creates a table for the upcoming race details using json objects from the HorseRace.java code running on its own server
-				function makeRaceDetailsTable() {
-    				let jsonData = JSON.parse(event.data);
-					//this is the table we want to populate
-					let tbody = document.querySelector("#raceDetailsTable tbody");
-    				let table = document.createElement("table");
+				//When a message is received
+				ws.addEventListener("message", event=> {
+					//event is an object which has properties, event.data would be the message that was received
+					console.log(event);
 
-    				jsonData.forEach((obj: any) => {
-						//each key and value will be in their own row
-      					for (const key in obj) {
-        					if (obj.hasOwnProperty(key)) {
-								//make new row
+					//dynamically creates a table for the upcoming race details using json objects from the HorseRace.java code running on its own server
+					function makeRaceDetailsTable() {
+    					let jsonData = JSON.parse(event.data);
+						//this is the table we want to populate
+						let tbody = document.querySelector("#raceTrackWeatherTable tbody");
+						let table1 = document.createElement("table");
+
+						for(var key in jsonData[0]){
+							if(jsonData[0].hasOwnProperty(key)){
 								const row = document.createElement('tr');
-          						const keyCell = document.createElement('td');
-         						const valueCell = document.createElement('td');
+								const keyCell = document.createElement('td');
+								const valueCell = document.createElement('td');
+							
+								keyCell.textContent = key;
+          						valueCell.textContent = jsonData[0][key];
 
-          						keyCell.textContent = key;
-          						valueCell.textContent = obj[key];
-
-								//row consists of key and value
-          						row.appendChild(keyCell);
+								row.appendChild(keyCell);
           						row.appendChild(valueCell);
-								//table consists of all rows
-								table.appendChild(row);
-        					}
-     					}
-    				});
-					tbody!.appendChild(table);
-  				}
+								table1.appendChild(row);
+							}
+						}
+						tbody!.appendChild(table1);
+					
+						tbody = document.querySelector("#raceDetailsTable tbody");
+    					let table2 = document.createElement("table");
 
-				//Almost exactly the same as the last table maker, but chooses a different spot on the page to make the table
-				function makeLastRaceResultTable(){
-					let jsonData = JSON.parse(event.data);
-					//this is the table we want to populate
-					let tbody = document.querySelector("#lastRaceResultTable tbody");
-    				let table = document.createElement("table");
 
-    				jsonData.forEach((obj: any) => {
-						//each key and value will be in their own row
-      					for (const key in obj) {
-        					if (obj.hasOwnProperty(key)) {
-								//make new row
+						for(var i=1; i<jsonData.length; i++){
+							var isFirst = true;
+							for(var key in jsonData[i]){
+								if(jsonData[i].hasOwnProperty(key)){
+
+          							const keyCell = document.createElement('td');
+         							const valueCell = document.createElement('td');
+
+          							keyCell.textContent = key;
+
+									if(isFirst){
+										var wrap = document.createElement("span");
+
+										var textNode = document.createTextNode(jsonData[i][key]);
+										wrap.appendChild(textNode);
+
+										const button = document.createElement("button");
+										button.name = i.toString();
+										button.textContent = "Show More";
+
+										button.addEventListener("click", function() {
+											showRows(button.name);
+										})
+
+										wrap.appendChild(button);
+									
+										valueCell.appendChild(wrap);
+										isFirst = false;
+
+										const row = document.createElement('th');
+										row.appendChild(keyCell);
+          								row.appendChild(valueCell);
+										table2.appendChild(row);
+									}
+									else{
+										valueCell.textContent = jsonData[i][key];
+
+										const hiddenRow = document.createElement('tr');
+										hiddenRow.classList.add("hrow" + i);
+										hiddenRow.appendChild(keyCell);
+          								hiddenRow.appendChild(valueCell);
+										table2.appendChild(hiddenRow);
+
+									}
+								}
+							}
+						}
+						tbody!.appendChild(table2);
+  					}
+
+					function showRows(buttonName: string){
+						var i = parseInt(buttonName);
+						var hrows = document.querySelectorAll(".hrow"+i);
+						var nothrows = document.querySelectorAll(".nothrow"+i);
+						if(hrows.length == 0){
+							nothrows.forEach(row => {
+								row.className = "hrow"+i;
+							});
+						}
+						else{
+							hrows.forEach(row => {
+								row.className = "nothrow"+i;
+							});
+						}
+					}
+
+					//Almost exactly the same as the last table maker, but chooses a different spot on the page to make the table
+					function makeLastRaceResultTable(){
+						let jsonData = JSON.parse(event.data);
+
+						let tbody = document.querySelector("#lastRaceTrackWeatherTable tbody")
+						let table1 = document.createElement("table");
+
+						for(var key in jsonData[0]){
+							if(jsonData[0].hasOwnProperty(key)){
 								const row = document.createElement('tr');
-          						const keyCell = document.createElement('td');
-         						const valueCell = document.createElement('td');
+								const keyCell = document.createElement('td');
+								const valueCell = document.createElement('td');
+							
+								keyCell.textContent = key;
+          						valueCell.textContent = jsonData[0][key];
 
-          						keyCell.textContent = key;
-          						valueCell.textContent = obj[key];
-
-								//row consists of key and value
-          						row.appendChild(keyCell);
+								row.appendChild(keyCell);
           						row.appendChild(valueCell);
-								//table consists of all rows
-								table.appendChild(row);
-        					}
-     					}
-    				});
-					tbody!.appendChild(table);
-				}
+								table1.appendChild(row);
+							}
+						}
+						tbody!.appendChild(table1);
 
-				//creates the table with all the previous race results on server startup
-				function makeAllRaceResultsTable(){
+						tbody = document.querySelector("#lastRaceResultTable tbody");
+    					let table2 = document.createElement("table");
 
-				}
+						for(var i=1; i<jsonData.length; i++){
+							for(var key in jsonData[i]){
+								if(jsonData[i].hasOwnProperty(key)){
 
-				//adds a new row to the top of the allRaceResultsTable each time a winner is announced
-				function addNewRow(){
+									//make new row
+									const row = document.createElement('tr');
+          							const keyCell = document.createElement('td');
+         							const valueCell = document.createElement('td');
 
-				}
+          							keyCell.textContent = key;
+									valueCell.textContent = jsonData[i][key];
+								
+									row.appendChild(keyCell);
+          							row.appendChild(valueCell);
+									//table consists of all rows
+									table2.appendChild(row);
+								}
+							}
+						}
+						tbody!.appendChild(table2);
+    				
+					}
+
+					//creates the table with all the previous race results on server startup
+					function makeAllRaceResultsTable(){
+
+					}
+
+					//adds a new row to the top of the allRaceResultsTable each time a winner is announced
+					function addNewRow(){
+
+					}
 
 
 
-				//call makeRaceDetailsTable() on message event if the message does not contain the field for winner
-				//this means the message is giving us race details, NOT the results of a race
-				if(!event.data.includes("winner")){
-					makeRaceDetailsTable();
-				}
-				//the only other message we will be getting (so far 3/31/24) is one that tells us the winner
-				else{
-					makeLastRaceResultTable();
-					addNewRow();
-				}
+					//call makeRaceDetailsTable() on message event if the message does not contain the field for winner
+					//this means the message is giving us race details, NOT the results of a race
+					if(!event.data.includes("winner")){
+						makeRaceDetailsTable();
+					}	
+					//the only other message we will be getting (so far 3/31/24) is one that tells us the winner
+					else{
+						makeLastRaceResultTable();
+						addNewRow();
+					}
 
 
+
+				});
 
 			});
 
@@ -336,133 +433,4 @@ import Card from '../components/Card.astro';
 
 	</body>
 </Layout>
-
-	<style>
-		header{
-			width: 100%;
-			height: auto;
-			border: 2px solid #fefefe;
-			padding: 10% auto;
-			text-align: center;
-		}
-		header img{
-			width: 50%;
-			max-height: 8%;
-		}
-		h1{
-			color: #fefefe;
-			display: inline-block;
-		}
-		.timer-box{
-			width: 100%;
-			margin: 10px auto;
-			border: 2px solid #fa8585;
-			padding: 10% auto;
-		}
-		.flex-container{
-			display: flex;
-			flex-direction: row;
-			height: auto;
-		}
-		.left{
-			width: 20%;
-			height: auto;
-			margin: 10px auto;
-			border: 2px solid #85fad7;
-			padding:10% auto;
-		}
-		table, tr, td{
-			background-color: #fefefe;
-			border: solid;
-		}
-		.right{
-			width: 20%;
-			margin: 10px auto;
-			border: 2px solid #85fa85;
-			padding: 10% auto;
-		}
-		.middle{
-			width: 50%;
-			margin: 10px auto;
-			border: 2px solid #faea85;
-			padding: 10% auto;
-		}
-		.bottom{
-			width: 100%;
-			margin: 10px auto;
-			border: 2px solid #d185fa;
-			padding: 10% auto;
-		}
-		footer{
-			width: 100%;
-			margin: 10px auto;
-			border: 2px solid #ed9a53;
-			padding: 10% auto;
-		}
-
-		/* styling for login and signup forms */
-		input[type=text], input[type=password]{
-			width:100%;
-			padding:10px 18px;
-			margin: 8px auto;
-			right: 10px;
-			display: inline-block;
-			box-sizing: border-box;
-		}
-		.imgcontainer{
-			text-align: center;
-			margin: 12px 0 5px 0;
-			position: relative;
-		}
-		img.avatar{
-			max-width: 50%;
-			max-height: 50%;
-			float: center;
-			border-radius:50%;
-		}
-		.container-top{
-			padding: 5px;
-		}
-		.container-bottom{
-			padding: 5px;
-		}
-		.login-modal{
-			display: none;
-			position: fixed;
-			z-index: 1;
-			left: 0;
-			top: 0;
-			/*transform: translate(-50%, -50%);*/
-			width: 100%;
-			height: 100%;
-			/*margin: auto;*/
-			overflow: auto;
-			background-color: rgba(0,0,0);
-			background-color: rgba(0,0,0,0.4);
-			padding-top: 60px;
-		}
-		.signup-modal{
-			display: none;
-			position: fixed;
-			z-index: 1;
-			left: 0;
-			top: 0;
-			/*transform: translate(-50%, -50%);*/
-			width: 100%;
-			height: 100%;
-			/*margin: auto;*/
-			overflow: auto;
-			background-color: rgba(0,0,0);
-			background-color: rgba(0,0,0,0.4);
-			padding-top: 60px;
-		}
-		.modal-content{
-			width: 30%;
-			height: auto;
-			margin: 5% auto 15% auto;
-			border: 1px solid #888;
-			background-color: #fefefe;
-		}
-		/* styling for login form ends */
-	</style>
 </html>
