@@ -80,12 +80,28 @@ const data2 = [
     }
 ]
 
+const data3 = [
+    {
+        dateTime: "12:15 4/1/24",
+        track: "grass",
+        weather: "sun",
+        winner: "horse2"
+    },
+    {
+        dateTime: "12:30 4/1/24",
+        track: "lava",
+        weather: "snow",
+        winner: "horse4"
+    }
+]
+
 //when the server starts up, do this
 wss.on("connection", ws => {
     console.log("New client connected");
 
     ws.send(JSON.stringify(data2));
     ws.send(JSON.stringify(data));
+    ws.send(JSON.stringify(data3));
 
     //receives a message from the browser and prints it in the console
     //sends a confirmation message back

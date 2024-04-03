@@ -28,9 +28,11 @@ import Card from '../components/Card.astro';
 					style=
 					"width: auto;
 					float: right;
-					margin: 10px 10px 10px 10px;
+					margin: 0px auto;
 					border-radius: 6px;
-					display: inline-block;
+					position: absolute;
+					top: 15px;
+					right: 15px;
 					"
 					>Login
 				</button>
@@ -47,13 +49,6 @@ import Card from '../components/Card.astro';
 						<span 
 							onclick="document.getElementById('login-form').style.display='none'"
 							class="close"
-							style="
-							color: #000000;
-							position: relative;
-							right:-90%;
-							z-index: 2;
-							top:0%;
-							font-size:30px;"
 							title="Close Modal">&times;
 						</span>
 
@@ -77,7 +72,8 @@ import Card from '../components/Card.astro';
 							padding:8px 18px;
 							margin: 16px auto;
 							display: inline-block;
-							box-sizing: border-box;"
+							box-sizing: border-box;
+							cursor: pointer;"
 							>Submit</button>
 						</div>
 
@@ -86,6 +82,7 @@ import Card from '../components/Card.astro';
 									document.getElementById('login-form').style.display='none'"
 								type="button"	
 								style="width:100%;
+									   cursor: pointer;
 									"
 							>Create New Account
 							</button>
@@ -104,13 +101,6 @@ import Card from '../components/Card.astro';
 							document.getElementById('login-form').style.display='block'"
 							class="close"
 							title="close modal"
-							style="
-								color: #000000;
-								position: relative;
-								right:-90%;
-								z-index: 2;
-								top:0%;
-								font-size:30px;"
 							>&times
 						</span>
 
@@ -153,7 +143,7 @@ import Card from '../components/Card.astro';
 				<section id="flex-container">
 					<!-- current race info. Includes all horses and their info along with space to bet on each horse -->
 					<section class="sidebox">
-						<h1>Left</h1>
+						<h1>Next Race</h1>
 						<div id="race-details">
 							<table id="raceTrackWeatherTable">
 								<tbody>
@@ -179,7 +169,7 @@ import Card from '../components/Card.astro';
 					</section>
 
 					<section class="sidebox">
-						<h1>Right</h1>
+						<h1>Results</h1>
 						<div id="race-results">
 							<!-- Table that will show the previous race details, the winner of the race, and whether or not the user won -->
 							<table id="lastRaceTrackWeatherTable">
@@ -198,21 +188,23 @@ import Card from '../components/Card.astro';
 				</section>
 
 				<section id="bottom">
-					<h1>Bottom</h1>
+					<h1>Past Races</h1>
 					<div id="all results">
 						<!-- needs javascript to add new section for each new race result -->
 						<table id="allResultsTable">
+						<!-- 
 							<thead>
-								<th> Winning Horse </th>
-								<th> Track </th>
-								<th> Weather </th>
+								<tr>
+									<th>Track</th>
+									<th>Weather</th>
+									<th>Winner</th>
+								</tr>
 							</thead>
-
+						-->
 							<tbody>
 								<!-- dynamically populated with a file containing all the previous winners, probably from database, on server connection -->
 								<!-- New row is added to the top everytime a race happens and winners are displayed -->
 							</tbody>
-							
 						</table>
 			
 					<div>
@@ -228,6 +220,8 @@ import Card from '../components/Card.astro';
 	
 
 		<script>
+import { isLeftHandSideExpression } from "typescript";
+
 
 
 			document.addEventListener("DOMContentLoaded", e=> {
@@ -294,22 +288,29 @@ import Card from '../components/Card.astro';
           							keyCell.textContent = key;
 
 									if(isFirst){
-										var wrap = document.createElement("span");
-
+										var wrap1 = document.createElement("span");
 										var textNode = document.createTextNode(jsonData[i][key]);
-										wrap.appendChild(textNode);
+										wrap1.appendChild(textNode);
+										wrap1.style.float = "left";
 
 										const button = document.createElement("button");
 										button.name = i.toString();
-										button.textContent = "Show More";
+
+										var wrap2 = document.createElement("span");
+										var arrow = document.createElement("span");
+										arrow.classList.add("dArrow");
+										button.style.marginTop = "3px";
+										button.appendChild(arrow);
 
 										button.addEventListener("click", function() {
 											showRows(button.name);
 										})
 
-										wrap.appendChild(button);
+										wrap2.appendChild(button);
+										wrap2.style.float = "right";
 									
-										valueCell.appendChild(wrap);
+										valueCell.appendChild(wrap1);
+										valueCell.appendChild(wrap2);
 										isFirst = false;
 
 										const row = document.createElement('th');
@@ -400,7 +401,30 @@ import Card from '../components/Card.astro';
 
 					//creates the table with all the previous race results on server startup
 					function makeAllRaceResultsTable(){
+						let jsonData = JSON.parse(event.data);
 
+						let tbody = document.querySelector("#allResultsTable tbody");
+    					let table = document.createElement("table");
+
+						for(var i=0; i<jsonData.length; i++){
+							for(var key in jsonData[i]){
+								if(jsonData[i].hasOwnProperty(key)){
+									//make new row
+									const row = document.createElement('tr');
+          							const keyCell = document.createElement('td');
+         							const valueCell = document.createElement('td');
+
+          							keyCell.textContent = key;
+									valueCell.textContent = jsonData[i][key];
+								
+									row.appendChild(keyCell);
+          							row.appendChild(valueCell);
+									//table consists of all rows
+									table.appendChild(row);
+								}
+							}
+						}
+						tbody!.appendChild(table);
 					}
 
 					//adds a new row to the top of the allRaceResultsTable each time a winner is announced
@@ -408,11 +432,10 @@ import Card from '../components/Card.astro';
 
 					}
 
-
-
-					//call makeRaceDetailsTable() on message event if the message does not contain the field for winner
-					//this means the message is giving us race details, NOT the results of a race
-					if(!event.data.includes("winner")){
+					if(event.data.includes("dateTime")){
+						makeAllRaceResultsTable();
+					}
+					else if(!event.data.includes("winner")){
 						makeRaceDetailsTable();
 					}	
 					//the only other message we will be getting (so far 3/31/24) is one that tells us the winner
