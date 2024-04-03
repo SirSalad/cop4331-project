@@ -12,6 +12,7 @@ class UserRepository : IdTable<String>("user_repository") {
     override val id = varchar("username", 50).entityId()
     val password = varchar("password", 50)
     val coins = integer("coins").default(0)
+    val premium = bool("premium").default(false)
 
     override val primaryKey = PrimaryKey(id)
 
@@ -20,7 +21,7 @@ class UserRepository : IdTable<String>("user_repository") {
             .where { this@UserRepository.id eq username }
             .andWhere { this@UserRepository.password eq password }
             .limit(1)
-            .map { row -> User(username, password, row[coins]) }
+            .map { row -> User(username, password, row[coins], row[premium]) }
             .singleOrNull()
     }
 
@@ -28,7 +29,7 @@ class UserRepository : IdTable<String>("user_repository") {
         selectAll()
             .where { this@UserRepository.id eq username }
             .limit(1)
-            .map { row -> User(username, row[password], row[coins]) }
+            .map { row -> User(username, row[password], row[coins], row[premium]) }
             .singleOrNull()
     }
 
@@ -37,6 +38,7 @@ class UserRepository : IdTable<String>("user_repository") {
             it[id] = user.username
             it[password] = user.password
             it[coins] = user.coins
+            it[premium] = user.premium
         }
     }
 }

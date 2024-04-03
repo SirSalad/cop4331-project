@@ -36,6 +36,7 @@ fun Application.JWT(): JWTCreator.Builder =
 fun JWTCreator.Builder.withUserContext(user: User): JWTCreator.Builder =
     withClaim("username", user.username)
         .withClaim("coins", user.coins)
+        .withClaim("premium", user.premium)
 
 fun JWTCreator.Builder.sign(secret: String): String =
     sign(Algorithm.HMAC256(secret))
