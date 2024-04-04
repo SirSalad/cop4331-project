@@ -37,6 +37,48 @@ import Card from '../components/Card.astro';
 					>Login
 				</button>
 
+				<!-- premium account button -->
+				<!-- this should only be visible once the user is logged in and should replace the login button im just not sure how to do that -->
+				<button 
+					onclick="document.getElementById('premium-form').style.display='block'"
+					style="width: auto;
+					display: none;
+					float: right;
+					margin: 0px auto;
+					border-radius: 6px;
+					position: absolute;
+					top: 15px;
+					right: 15px;">Upgrade to Premium</button>
+
+				<div id="premium-form" class="premium-modal">
+					<form class="modal-content animate"
+					action="/action_page.php"
+					method="POST">
+					<span 
+							onclick="document.getElementById('premium-form').style.display='none'"
+							class="close"
+							title="Close Modal">&times;
+						</span>
+						
+						<div class="container-top">
+							
+							<label for="code" style="color: #888"><b>Premium Code</b></label>
+							<input type="text" placeholder="Premium Code" name="code" title="Enter code to create a premium account" required>
+
+							<button type="submit"
+								style="width:100%;
+								padding:8px 18px;
+								margin: 16px auto;
+								display: inline-block;
+								box-sizing: border-box;"
+								>Submit
+							</button>
+
+						</div>
+					
+					</form>
+				</div>
+
 				<div id="login-form" class="login-modal">
 
 					<form 
@@ -104,7 +146,7 @@ import Card from '../components/Card.astro';
 							>&times
 						</span>
 
-						<!-- signup form requires a username and a password
+						<!-- signup form requires a username and a password, premium code is optional
 							needs to be able to check if these are available before submitting -->
 						<div class="container-top">
 							<label for="uname" style="color: #888"><b>Username</b></label>
@@ -114,6 +156,9 @@ import Card from '../components/Card.astro';
 							<label for="psw" style="color: #888"><b>Password</b></label>
 							<input type="password" placeholder="Enter Password" name="psw"
 							required>
+
+							<label for="code" style="color: #888"><b>Premium Code</b></label>
+							<input type="text" placeholder="Premium Code" name="code" title="Enter code to create a premium account">
 
 							<button type="submit"
 								style="width:100%;
@@ -155,10 +200,22 @@ import Card from '../components/Card.astro';
 		
 						</div>
 					</section>
+
+					<section id="bet-box">
+						<h1>Place your bet</h1>
+						<div id="betting">
+							<table id="betTable">
+								<tbody>
+
+								</tbody>
+							</table>
+
+						</div>
+					</section>
 		
-					<section id="middle">
-						<h1>Middle</h1>
-						<div id="animation-box">
+					<section id="animation-box">
+						<h1>Animation</h1>
+						<div id="animation">
 							<!-- No idea how to do whats going to be here -->
 		
 						</div>
@@ -444,6 +501,41 @@ import Card from '../components/Card.astro';
 						tbody!.appendChild(table);
 					}
 
+					function makeBetTable(){
+						let jsonData = JSON.parse(event.data);
+						let tbody = document.querySelector("#betTable tbody");
+						let table = document.createElement("table");
+
+						const head = document.createElement('tr');
+						const cell1 = document.createElement('td');
+						const cell2 = document.createElement('td');
+						cell1.textContent = "Horse";
+						cell2.textContent = "Select";
+						head.appendChild(cell1);
+						head.appendChild(cell2);
+						table.appendChild(head);
+
+						for(var i=1; i<jsonData.length; i++){
+							const value = String(Object.values(jsonData[i])[0]);
+							//make new row
+							const row = document.createElement('tr');
+          					const valueCell = document.createElement('td');
+							const checkCell = document.createElement('td');
+							const checkbox = document.createElement('input');
+							checkbox.type = 'checkbox';
+							checkbox.id = 'betCheckbox';
+
+							checkCell.appendChild(checkbox);
+							valueCell.textContent = value;
+          					row.appendChild(valueCell);
+							row.appendChild(checkCell);
+							//table consists of all rows
+							table.appendChild(row);
+						}
+						tbody!.appendChild(table);
+						console.log("table created");
+					}
+
 					//adds a new row to the top of the allRaceResultsTable each time a winner is announced
 					function addNewRow(){
 
@@ -453,6 +545,7 @@ import Card from '../components/Card.astro';
 						makeAllRaceResultsTable();
 					}
 					else if(!event.data.includes("winner")){
+						makeBetTable();
 						makeRaceDetailsTable();
 					}	
 					//the only other message we will be getting (so far 3/31/24) is one that tells us the winner

@@ -27,6 +27,8 @@
 				text-align: center;
 			}
 			#timer-box{
+				display: flex;
+				flex-direction: row;
 				width: 100%;
 				height: auto;
 				margin: 10px auto;
@@ -35,8 +37,8 @@
 				text-align: center;
 			}
 			#timer{
-				display: inline-flex;
-				margin: 5px auto;
+				margin: auto;
+				display: inline-block;
 				border: 5px solid #72ecff;
 				border-radius: 10%;
    				padding: 5px;
@@ -56,8 +58,15 @@
 				border: 2px solid #85fad7;
 				padding:10% auto;
 			}
+			#bet-box{
+				width: 15%;
+				height: auto;
+				margin: 10px auto;
+				border: 2px solid #f44b4b;
+				padding:10% auto;
+			}
 			table{
-				background-color: #fefefe;
+				background-color: #ffffff;
 				border: solid;
 				border-collapse: collapse;
 				width: 100%;
@@ -83,8 +92,8 @@
   				padding: 3px;
 				transform: rotate(45deg);
 			}
-			#middle{
-				width: 50%;
+			#animation-box{
+				width: 40%;
 				margin: 10px auto;
 				border: 2px solid #faea85;
 				padding: 10% auto;
@@ -166,6 +175,9 @@
 				background-color: rgba(0,0,0);
 				background-color: rgba(0,0,0,0.4);
 				padding-top: 60px;
+			}
+			.premium-modal{
+				display: none;
 			}
 			.modal-content{
 				width: 30%;
