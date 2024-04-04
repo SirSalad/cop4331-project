@@ -133,11 +133,7 @@ import Card from '../components/Card.astro';
 			<main>
 				<!-- timer -->
 				<section id="timer-box">
-					<h1>Timer box</h1>
-					<div id="timer">
-						<!-- Tiimer for how long until the next race -->
-
-					</div>
+					<div id="timer"></div>
 				</section>
 
 				<section id="flex-container">
@@ -220,14 +216,10 @@ import Card from '../components/Card.astro';
 	
 
 		<script>
-import { isLeftHandSideExpression } from "typescript";
-
-
-
 			document.addEventListener("DOMContentLoaded", e=> {
 				//needs url of websocket server
 				//wss is secure form of websockets, use that instead for realsies
-				const ws = new WebSocket("ws://localhost:8082");
+				const ws = new WebSocket("ws://localhost:8081");
 
 				//listening for connection to server
 				ws.addEventListener("open", e=> {
@@ -242,6 +234,30 @@ import { isLeftHandSideExpression } from "typescript";
 						y: 100
 					}));
 					*/
+					function countdown(min: number, sec: number){
+    					var element = document.getElementById("timer");
+						var endTime = (+new Date) + 1000*(60*(min)+sec) + 500;
+
+    					function twoDigits(n: number){
+        					return (n <= 9 ? "0" + n : n);
+    					}
+
+    					function updateTimer(){
+        					var msLeft = endTime - (+new Date);
+        					if ( msLeft < 1000 ) {
+            					element!.innerHTML = "Time is up!";
+        					} else {
+            					var time = new Date( msLeft );
+           	 					var hours = time.getUTCHours();
+            					var mins = time.getUTCMinutes();
+            					element!.innerHTML = (hours ? hours + ':' + twoDigits( mins ) : mins) + ':' + twoDigits( time.getUTCSeconds() );
+            					setTimeout( updateTimer, time.getUTCMilliseconds() + 500 );
+        					}
+    					}
+    					updateTimer();
+					}
+
+					countdown(15,0);
 				});
 
 
@@ -249,6 +265,7 @@ import { isLeftHandSideExpression } from "typescript";
 				ws.addEventListener("message", event=> {
 					//event is an object which has properties, event.data would be the message that was received
 					console.log(event);
+
 
 					//dynamically creates a table for the upcoming race details using json objects from the HorseRace.java code running on its own server
 					function makeRaceDetailsTable() {

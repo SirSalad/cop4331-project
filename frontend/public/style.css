@@ -28,9 +28,21 @@
 			}
 			#timer-box{
 				width: 100%;
+				height: auto;
 				margin: 10px auto;
 				border: 2px solid #fa8585;
 				padding: 10% auto;
+				text-align: center;
+			}
+			#timer{
+				display: inline-flex;
+				margin: 5px auto;
+				border: 5px solid #72ecff;
+				border-radius: 10%;
+   				padding: 5px;
+    			color: #ffffff;
+    			font-size: 40px;
+    			font-weight: bold;
 			}
 			#flex-container{
 				display: flex;

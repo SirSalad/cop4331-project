@@ -1,6 +1,6 @@
 const WebSocket = require("ws");
 
-const wss = new WebSocket.Server({port:8082});
+const wss = new WebSocket.Server({port:8081});
 
 const data = [
     {
@@ -94,6 +94,7 @@ const data3 = [
         winner: "horse4"
     }
 ]
+
 
 //when the server starts up, do this
 wss.on("connection", ws => {
