@@ -10,15 +10,17 @@ import Card from '../components/Card.astro';
 <html>
 <Layout title="Welcome to Astro.">
 	<head>
-		
+		<link rel="stylesheet" href="style.css">
 	</head>
 
 	<body>
 		<div id="page">
 
 			<header>
-				<h1>Header</h1>
-				<!-- will contain logo, title, and login button -->
+				<!-- Will contain logo, title, and login button -->
+				
+				<img src="logo.png" alt="Hoof Hustler logo">
+				
 
 				<!-- login button  -->
 				<button 
@@ -26,12 +28,56 @@ import Card from '../components/Card.astro';
 					style=
 					"width: auto;
 					float: right;
-					margin: 10px 10px 10px 10px;
+					margin: 0px auto;
 					border-radius: 6px;
-					display: inline-block;
+					position: absolute;
+					top: 15px;
+					right: 15px;
 					"
 					>Login
 				</button>
+
+				<!-- premium account button -->
+				<!-- this should only be visible once the user is logged in and should replace the login button im just not sure how to do that -->
+				<button 
+					onclick="document.getElementById('premium-form').style.display='block'"
+					style="width: auto;
+					display: none;
+					float: right;
+					margin: 0px auto;
+					border-radius: 6px;
+					position: absolute;
+					top: 15px;
+					right: 15px;">Upgrade to Premium</button>
+
+				<div id="premium-form" class="premium-modal">
+					<form class="modal-content animate"
+					action="/action_page.php"
+					method="POST">
+					<span 
+							onclick="document.getElementById('premium-form').style.display='none'"
+							class="close"
+							title="Close Modal">&times;
+						</span>
+						
+						<div class="container-top">
+							
+							<label for="code" style="color: #888"><b>Premium Code</b></label>
+							<input type="text" placeholder="Premium Code" name="code" title="Enter code to create a premium account" required>
+
+							<button type="submit"
+								style="width:100%;
+								padding:8px 18px;
+								margin: 16px auto;
+								display: inline-block;
+								box-sizing: border-box;"
+								>Submit
+							</button>
+
+						</div>
+					
+					</form>
+				</div>
 
 				<div id="login-form" class="login-modal">
 
@@ -45,13 +91,6 @@ import Card from '../components/Card.astro';
 						<span 
 							onclick="document.getElementById('login-form').style.display='none'"
 							class="close"
-							style="
-							color: #000000;
-							position: relative;
-							right:-90%;
-							z-index: 2;
-							top:0%;
-							font-size:30px;"
 							title="Close Modal">&times;
 						</span>
 
@@ -75,7 +114,8 @@ import Card from '../components/Card.astro';
 							padding:8px 18px;
 							margin: 16px auto;
 							display: inline-block;
-							box-sizing: border-box;"
+							box-sizing: border-box;
+							cursor: pointer;"
 							>Submit</button>
 						</div>
 
@@ -84,6 +124,7 @@ import Card from '../components/Card.astro';
 									document.getElementById('login-form').style.display='none'"
 								type="button"	
 								style="width:100%;
+									   cursor: pointer;
 									"
 							>Create New Account
 							</button>
@@ -102,17 +143,10 @@ import Card from '../components/Card.astro';
 							document.getElementById('login-form').style.display='block'"
 							class="close"
 							title="close modal"
-							style="
-								color: #000000;
-								position: relative;
-								right:-90%;
-								z-index: 2;
-								top:0%;
-								font-size:30px;"
 							>&times
 						</span>
 
-						<!-- signup form requires a username and a password
+						<!-- signup form requires a username and a password, premium code is optional
 							needs to be able to check if these are available before submitting -->
 						<div class="container-top">
 							<label for="uname" style="color: #888"><b>Username</b></label>
@@ -122,6 +156,9 @@ import Card from '../components/Card.astro';
 							<label for="psw" style="color: #888"><b>Password</b></label>
 							<input type="password" placeholder="Enter Password" name="psw"
 							required>
+
+							<label for="code" style="color: #888"><b>Premium Code</b></label>
+							<input type="text" placeholder="Premium Code" name="code" title="Enter code to create a premium account">
 
 							<button type="submit"
 								style="width:100%;
@@ -139,67 +176,89 @@ import Card from '../components/Card.astro';
 			</header>
 
 			<main>
-				<script>
-					//needs url of websocket server
-					//wss is secure form of websockets, use that instead for realsies
-					const ws = new WebSocket("ws://localhost:8082");
-					//listening for connection to server
-					ws.addEventListener("open", e=> {
-						console.log("We are connected");
-						
-						//sends a message to the server (on connection)
-						ws.send(JSON.stringify({
-							x: 254,
-							y: 100
-						}));
-					});
-
-					//receives message and prints it to console
-					ws.addEventListener("message", event=> {
-						//event is an object which has properties, event.data would be the message that was received
-						console.log(event);
-					});
-				</script>
 				<!-- timer -->
-				<section class="timer-box">
-					<h1>Timer box</h1>
-					<div class="timer">
-
-					</div>
+				<section id="timer-box">
+					<div id="timer"></div>
 				</section>
 
-				<section class="flex-container">
+				<section id="flex-container">
 					<!-- current race info. Includes all horses and their info along with space to bet on each horse -->
-					<section class="left">
-						<h1>Left</h1>
-						<div class="race-details">
-							<script>
-								
-							</script>
-		
-						</div>
-					</section>
-		
-					<section class="middle">
-						<h1>Middle</h1>
-						<div class="animation-box">
+					<section class="sidebox">
+						<h1>Next Race</h1>
+						<div id="race-details">
+							<table id="raceTrackWeatherTable">
+								<tbody>
+									<!--dynamically populated-->
+								</tbody>
+							</table>
+							<table id="raceDetailsTable">
+								<tbody>
+								  <!--dynamically populated-->
+								</tbody>
+							  </table>
+						
 		
 						</div>
 					</section>
 
-					<section class="right">
-						<h1>Right</h1>
-						<div class="race-results">
+					<section id="bet-box">
+						<h1>Place your bet</h1>
+						<div id="betting">
+							<table id="betTable">
+								<tbody>
+
+								</tbody>
+							</table>
+
+						</div>
+					</section>
 		
+					<section id="animation-box">
+						<h1>Animation</h1>
+						<div id="animation">
+							<!-- No idea how to do whats going to be here -->
+		
+						</div>
+					</section>
+
+					<section class="sidebox">
+						<h1>Results</h1>
+						<div id="race-results">
+							<!-- Table that will show the previous race details, the winner of the race, and whether or not the user won -->
+							<table id="lastRaceTrackWeatherTable">
+								<tbody>
+									<!--dynamically populated -->
+								</tbody>
+							</table>
+							<table id="lastRaceResultTable">
+								<tbody>
+								  <!--dynamically populated-->
+								</tbody>
+							  </table>
 						</div>
 					</section>
 
 				</section>
 
-				<section class="bottom">
-					<h1>Bottom</h1>
-					<div class="all results">
+				<section id="bottom">
+					<h1>Past Races</h1>
+					<div id="all results">
 						<!-- needs javascript to add new section for each new race result -->
+						<table id="allResultsTable">
+						<!-- 
+							<thead>
+								<tr>
+									<th>Track</th>
+									<th>Weather</th>
+									<th>Winner</th>
+								</tr>
+							</thead>
+						-->
+							<tbody>
+								<!-- dynamically populated with a file containing all the previous winners, probably from database, on server connection -->
+								<!-- New row is added to the top everytime a race happens and winners are displayed -->
+							</tbody>
+						</table>
 			
 					<div>
 				</section>
@@ -208,127 +267,303 @@ import Card from '../components/Card.astro';
 
 			<footer>
 				<h1>Footer</h1>
+				<!-- idk if we need this, its just here -->
 			</footer>
 		</div>
 	
+
+		<script>
+			document.addEventListener("DOMContentLoaded", e=> {
+				//needs url of websocket server
+				//wss is secure form of websockets, use that instead for realsies
+				const ws = new WebSocket("ws://localhost:8081");
+
+				//listening for connection to server
+				ws.addEventListener("open", e=> {
+					//on connection, display this message
+					console.log("We are connected");
+				
+					//sends a message to the server (on connection)
+					//stringify converts anything to a json object
+					/*
+					ws.send(JSON.stringify({
+						x: 254,
+						y: 100
+					}));
+					*/
+					function countdown(min: number, sec: number){
+    					var element = document.getElementById("timer");
+						var endTime = (+new Date) + 1000*(60*(min)+sec) + 500;
+
+    					function twoDigits(n: number){
+        					return (n <= 9 ? "0" + n : n);
+    					}
+
+    					function updateTimer(){
+        					var msLeft = endTime - (+new Date);
+        					if ( msLeft < 1000 ) {
+            					element!.innerHTML = "Time is up!";
+        					} else {
+            					var time = new Date( msLeft );
+           	 					var hours = time.getUTCHours();
+            					var mins = time.getUTCMinutes();
+            					element!.innerHTML = (hours ? hours + ':' + twoDigits( mins ) : mins) + ':' + twoDigits( time.getUTCSeconds() );
+            					setTimeout( updateTimer, time.getUTCMilliseconds() + 500 );
+        					}
+    					}
+    					updateTimer();
+					}
+
+					countdown(15,0);
+				});
+
+
+				//When a message is received
+				ws.addEventListener("message", event=> {
+					//event is an object which has properties, event.data would be the message that was received
+					console.log(event);
+
+
+					//dynamically creates a table for the upcoming race details using json objects from the HorseRace.java code running on its own server
+					function makeRaceDetailsTable() {
+    					let jsonData = JSON.parse(event.data);
+						//this is the table we want to populate
+						let tbody = document.querySelector("#raceTrackWeatherTable tbody");
+						let table1 = document.createElement("table");
+
+						for(var key in jsonData[0]){
+							if(jsonData[0].hasOwnProperty(key)){
+								const row = document.createElement('tr');
+								const keyCell = document.createElement('td');
+								const valueCell = document.createElement('td');
+							
+								keyCell.textContent = key;
+          						valueCell.textContent = jsonData[0][key];
+
+								row.appendChild(keyCell);
+          						row.appendChild(valueCell);
+								table1.appendChild(row);
+							}
+						}
+						tbody!.appendChild(table1);
+					
+						tbody = document.querySelector("#raceDetailsTable tbody");
+    					let table2 = document.createElement("table");
+
+
+						for(var i=1; i<jsonData.length; i++){
+							var isFirst = true;
+							for(var key in jsonData[i]){
+								if(jsonData[i].hasOwnProperty(key)){
+
+          							const keyCell = document.createElement('td');
+         							const valueCell = document.createElement('td');
+
+          							keyCell.textContent = key;
+
+									if(isFirst){
+										var wrap1 = document.createElement("span");
+										var textNode = document.createTextNode(jsonData[i][key]);
+										wrap1.appendChild(textNode);
+										wrap1.style.float = "left";
+
+										const button = document.createElement("button");
+										button.name = i.toString();
+
+										var wrap2 = document.createElement("span");
+										var arrow = document.createElement("span");
+										arrow.classList.add("dArrow");
+										button.style.marginTop = "3px";
+										button.appendChild(arrow);
+
+										button.addEventListener("click", function() {
+											showRows(button.name);
+										})
+
+										wrap2.appendChild(button);
+										wrap2.style.float = "right";
+									
+										valueCell.appendChild(wrap1);
+										valueCell.appendChild(wrap2);
+										isFirst = false;
+
+										const row = document.createElement('th');
+										row.appendChild(keyCell);
+          								row.appendChild(valueCell);
+										table2.appendChild(row);
+									}
+									else{
+										valueCell.textContent = jsonData[i][key];
+
+										const hiddenRow = document.createElement('tr');
+										hiddenRow.classList.add("hrow" + i);
+										hiddenRow.appendChild(keyCell);
+          								hiddenRow.appendChild(valueCell);
+										table2.appendChild(hiddenRow);
+
+									}
+								}
+							}
+						}
+						tbody!.appendChild(table2);
+  					}
+
+					function showRows(buttonName: string){
+						var i = parseInt(buttonName);
+						var hrows = document.querySelectorAll(".hrow"+i);
+						var nothrows = document.querySelectorAll(".nothrow"+i);
+						if(hrows.length == 0){
+							nothrows.forEach(row => {
+								row.className = "hrow"+i;
+							});
+						}
+						else{
+							hrows.forEach(row => {
+								row.className = "nothrow"+i;
+							});
+						}
+					}
+
+					//Almost exactly the same as the last table maker, but chooses a different spot on the page to make the table
+					function makeLastRaceResultTable(){
+						let jsonData = JSON.parse(event.data);
+
+						let tbody = document.querySelector("#lastRaceTrackWeatherTable tbody")
+						let table1 = document.createElement("table");
+
+						for(var key in jsonData[0]){
+							if(jsonData[0].hasOwnProperty(key)){
+								const row = document.createElement('tr');
+								const keyCell = document.createElement('td');
+								const valueCell = document.createElement('td');
+							
+								keyCell.textContent = key;
+          						valueCell.textContent = jsonData[0][key];
+
+								row.appendChild(keyCell);
+          						row.appendChild(valueCell);
+								table1.appendChild(row);
+							}
+						}
+						tbody!.appendChild(table1);
+
+						tbody = document.querySelector("#lastRaceResultTable tbody");
+    					let table2 = document.createElement("table");
+
+						for(var i=1; i<jsonData.length; i++){
+							for(var key in jsonData[i]){
+								if(jsonData[i].hasOwnProperty(key)){
+
+									//make new row
+									const row = document.createElement('tr');
+          							const keyCell = document.createElement('td');
+         							const valueCell = document.createElement('td');
+
+          							keyCell.textContent = key;
+									valueCell.textContent = jsonData[i][key];
+								
+									row.appendChild(keyCell);
+          							row.appendChild(valueCell);
+									//table consists of all rows
+									table2.appendChild(row);
+								}
+							}
+						}
+						tbody!.appendChild(table2);
+    				
+					}
+
+					//creates the table with all the previous race results on server startup
+					function makeAllRaceResultsTable(){
+						let jsonData = JSON.parse(event.data);
+
+						let tbody = document.querySelector("#allResultsTable tbody");
+    					let table = document.createElement("table");
+
+						for(var i=0; i<jsonData.length; i++){
+							for(var key in jsonData[i]){
+								if(jsonData[i].hasOwnProperty(key)){
+									//make new row
+									const row = document.createElement('tr');
+          							const keyCell = document.createElement('td');
+         							const valueCell = document.createElement('td');
+
+          							keyCell.textContent = key;
+									valueCell.textContent = jsonData[i][key];
+								
+									row.appendChild(keyCell);
+          							row.appendChild(valueCell);
+									//table consists of all rows
+									table.appendChild(row);
+								}
+							}
+						}
+						tbody!.appendChild(table);
+					}
+
+					function makeBetTable(){
+						let jsonData = JSON.parse(event.data);
+						let tbody = document.querySelector("#betTable tbody");
+						let table = document.createElement("table");
+
+						const head = document.createElement('tr');
+						const cell1 = document.createElement('td');
+						const cell2 = document.createElement('td');
+						cell1.textContent = "Horse";
+						cell2.textContent = "Select";
+						head.appendChild(cell1);
+						head.appendChild(cell2);
+						table.appendChild(head);
+
+						for(var i=1; i<jsonData.length; i++){
+							const value = String(Object.values(jsonData[i])[0]);
+							//make new row
+							const row = document.createElement('tr');
+          					const valueCell = document.createElement('td');
+							const checkCell = document.createElement('td');
+							const checkbox = document.createElement('input');
+							checkbox.type = 'checkbox';
+							checkbox.id = 'betCheckbox';
+
+							checkCell.appendChild(checkbox);
+							valueCell.textContent = value;
+          					row.appendChild(valueCell);
+							row.appendChild(checkCell);
+							//table consists of all rows
+							table.appendChild(row);
+						}
+						tbody!.appendChild(table);
+						console.log("table created");
+					}
+
+					//adds a new row to the top of the allRaceResultsTable each time a winner is announced
+					function addNewRow(){
+
+					}
+
+					if(event.data.includes("dateTime")){
+						makeAllRaceResultsTable();
+					}
+					else if(!event.data.includes("winner")){
+						makeBetTable();
+						makeRaceDetailsTable();
+					}	
+					//the only other message we will be getting (so far 3/31/24) is one that tells us the winner
+					else{
+						makeLastRaceResultTable();
+						addNewRow();
+					}
+
+
+
+				});
+
+			});
+
+		</script>
+
+
+
 	</body>
 </Layout>
-
-	<style>
-		header{
-			width: 100%;
-			border: 2px solid #fefefe;
-			padding: 10% auto;
-		}
-		h1{
-			color: #fefefe;
-			display: inline-block;
-		}
-		.timer-box{
-			width: 100%;
-			margin: 10px auto;
-			border: 2px solid #fa8585;
-			padding: 10% auto;
-		}
-		.flex-container{
-			display: flex;
-			flex-direction: row;
-			height: 200px;
-		}
-		.left{
-			width: 20%;
-			margin: 10px auto;
-			border: 2px solid #85fad7;
-			padding:10% auto;
-		}
-		.right{
-			width: 20%;
-			margin: 10px auto;
-			border: 2px solid #85fa85;
-			padding: 10% auto;
-		}
-		.middle{
-			width: 50%;
-			margin: 10px auto;
-			border: 2px solid #faea85;
-			padding: 10% auto;
-		}
-		.bottom{
-			width: 100%;
-			margin: 10px auto;
-			border: 2px solid #d185fa;
-			padding: 10% auto;
-		}
-		footer{
-			width: 100%;
-			margin: 10px auto;
-			border: 2px solid #ed9a53;
-			padding: 10% auto;
-		}
-
-		/* styling for login and signup forms */
-		input[type=text], input[type=password]{
-			width:100%;
-			padding:10px 18px;
-			margin: 8px auto;
-			right: 10px;
-			display: inline-block;
-			box-sizing: border-box;
-		}
-		.imgcontainer{
-			text-align: center;
-			margin: 12px 0 5px 0;
-			position: relative;
-		}
-		img.avatar{
-			max-width: 50%;
-			max-height: 50%;
-			float: center;
-			border-radius:50%;
-		}
-		.container-top{
-			padding: 5px;
-		}
-		.container-bottom{
-			padding: 5px;
-		}
-		.login-modal{
-			display: none;
-			position: fixed;
-			z-index: 1;
-			left: 0;
-			top: 0;
-			/*transform: translate(-50%, -50%);*/
-			width: 100%;
-			height: 100%;
-			/*margin: auto;*/
-			overflow: auto;
-			background-color: rgba(0,0,0);
-			background-color: rgba(0,0,0,0.4);
-			padding-top: 60px;
-		}
-		.signup-modal{
-			display: none;
-			position: fixed;
-			z-index: 1;
-			left: 0;
-			top: 0;
-			/*transform: translate(-50%, -50%);*/
-			width: 100%;
-			height: 100%;
-			/*margin: auto;*/
-			overflow: auto;
-			background-color: rgba(0,0,0);
-			background-color: rgba(0,0,0,0.4);
-			padding-top: 60px;
-		}
-		.modal-content{
-			width: 30%;
-			height: auto;
-			margin: 5% auto 15% auto;
-			border: 1px solid #888;
-			background-color: #fefefe;
-		}
-		/* styling for login form ends */
-	</style>
 </html>
