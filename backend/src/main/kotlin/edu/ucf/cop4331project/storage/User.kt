@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 data class User(
     val username: String,
     val password: String,
-    var coins: Int = 0,
+    var coins: Int = 500,
     var premium: Boolean = false
 )
