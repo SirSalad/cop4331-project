@@ -17,14 +17,15 @@ import Card from '../components/Card.astro';
 		<div id="page">
 
 			<header>
+			<script src="functions.js"> </script>
 				<!-- Will contain logo, title, and login button -->
 				
 				<img src="logo.png" alt="Hoof Hustler logo">
 				
 
 				<!-- login button  -->
-				<button 
-					onclick="document.getElementById('login-form').style.display='block'"
+				<button id="loginButton"
+					onclick="document.getElementById('login-form').style.display='block';"
 					style=
 					"width: auto;
 					float: right;
@@ -39,8 +40,8 @@ import Card from '../components/Card.astro';
 
 				<!-- premium account button -->
 				<!-- this should only be visible once the user is logged in and should replace the login button im just not sure how to do that -->
-				<button 
-					onclick="document.getElementById('premium-form').style.display='block'"
+				<button id="premiumButton"
+					onclick="document.getElementById('premium-form').style.display='block';"
 					style="width: auto;
 					display: none;
 					float: right;
@@ -71,6 +72,7 @@ import Card from '../components/Card.astro';
 								margin: 16px auto;
 								display: inline-block;
 								box-sizing: border-box;"
+								onclick="updateLoginButton();"
 								>Submit
 							</button>
 
@@ -166,6 +168,7 @@ import Card from '../components/Card.astro';
 								margin: 16px auto;
 								display: inline-block;
 								box-sizing: border-box;"
+								onclick="updateLoginButton();"
 								>Submit
 							</button>
 
