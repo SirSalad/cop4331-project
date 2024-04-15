@@ -26,4 +26,41 @@ function updateLoginButton(){
     }
 }
 
-document.addEventListener('DOMContentLoaded', updateLoginButton);
+async function checkLoginStatus() {
+    try {
+        const response = await fetch("/* Address in Backend */", {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include'
+        });
+
+        if(!response.ok){
+            throw new Error('Failed to fetch login status');
+        }
+
+        const data = await response.json();
+        switch(data.status){
+            case 'guest':
+                loginValue = 0;
+                break;
+            case 'user':
+                loginValue = 1;
+                break;
+            case 'premium':
+                loginValue = 2;
+                break;
+            default:
+                console.log("Invalid Status");
+        }
+        updateLoginButton();
+
+    } catch (error) {
+        console.error('Error Fetching Login', error);
+    }
+}
+
+
+
+document.addEventListener('DOMContentLoaded', checkLoginStatus);
