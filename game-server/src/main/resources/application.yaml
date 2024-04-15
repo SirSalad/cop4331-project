@@ -1,0 +1,15 @@
+ktor:
+  deployment:
+    port: 8081
+  application:
+    modules:
+      - "edu.ucf.cop4331project.GameServerApplication.main"
+
+jwt:
+  secret: "secret"
+  issuer: "http://0.0.0.0:8081/"
+
+datasource:
+  jdbc-url: "jdbc:postgresql://localhost:5432/postgres"
+  username: "postgres"
+  password: "postgres"

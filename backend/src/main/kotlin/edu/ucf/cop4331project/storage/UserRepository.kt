@@ -1,6 +1,7 @@
 package edu.ucf.cop4331project.storage
 
 import edu.ucf.cop4331project.common.container.Container
+import edu.ucf.cop4331project.common.storage.User
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.selectAll
@@ -38,7 +39,7 @@ class UserRepository : IdTable<String>("user_repository") {
             it[id] = user.username
             it[password] = user.password
             it[coins] = user.coins
-            it[premium] = user.premium
+            it[premium] = user.isPremium
         }
     }
 }

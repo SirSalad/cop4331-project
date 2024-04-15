@@ -1,8 +1,8 @@
 package edu.ucf.cop4331project.controller
 
 import com.google.inject.Inject
-import edu.ucf.cop4331project.storage.User
 import edu.ucf.cop4331project.common.container.Container
+import edu.ucf.cop4331project.common.storage.User
 import edu.ucf.cop4331project.container.RouteMapping
 import edu.ucf.cop4331project.container.Router
 import edu.ucf.cop4331project.storage.UserService
@@ -48,9 +48,7 @@ class AuthenticationController @Inject constructor(private val application: Appl
             return@post
         }
 
-        // Clone and re-set defaults in case of tampering
-        val newUser = request.copy(coins = 0)
-        userService.update(newUser)
+        userService.update(request)
 
         call.respond(status = HttpStatusCode.Created, "User created")
     }
