@@ -36,6 +36,7 @@ class Game(private val horses: Set<Horse>, private val track: Track) {
                     "Freddy Fazhorse" -> score += 5
                 }
             }
+            score
         }
 
         return getWeighedRandomArbitrary(scores)
