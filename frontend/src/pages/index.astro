@@ -297,291 +297,179 @@ import Card from '../components/Card.astro';
 	
 
 		<script>
+			import { getCurrentGame, getGameTime, getPreviousGames } from "../server/gameServer";
+
 			document.addEventListener("DOMContentLoaded", e=> {
-				//needs url of websocket server
-				//wss is secure form of websockets, use that instead for realsies
-				const ws = new WebSocket("ws://localhost:8081");
+				setInterval(() => {
+					pollCountdown();
+					//pollRaceDetails();
+				}, 1000);
+				pollRaceDetails();
+				pollRaceResult();
+				makeLastRaceResultTable();
+				makeBetTable();
 
-				//listening for connection to server
-				ws.addEventListener("open", e=> {
-					//on connection, display this message
-					console.log("We are connected");
-				
-					//sends a message to the server (on connection)
-					//stringify converts anything to a json object
-					/*
-					ws.send(JSON.stringify({
-						x: 254,
-						y: 100
-					}));
-					*/
-					function countdown(min: number, sec: number){
-    					var element = document.getElementById("timer");
-						var endTime = (+new Date) + 1000*(60*(min)+sec) + 500;
+				async function pollCountdown() {
+					const response = await getGameTime();
 
-    					function twoDigits(n: number){
-        					return (n <= 9 ? "0" + n : n);
-    					}
-
-    					function updateTimer(){
-        					var msLeft = endTime - (+new Date);
-        					if ( msLeft < 1000 ) {
-            					element!.innerHTML = "Time is up!";
-        					} else {
-            					var time = new Date( msLeft );
-           	 					var hours = time.getUTCHours();
-            					var mins = time.getUTCMinutes();
-            					element!.innerHTML = (hours ? hours + ':' + twoDigits( mins ) : mins) + ':' + twoDigits( time.getUTCSeconds() );
-            					setTimeout( updateTimer, time.getUTCMilliseconds() + 500 );
-        					}
-    					}
-    					updateTimer();
+					const timerElement = document.getElementById("timer");
+					if (timerElement) {
+						timerElement.innerHTML = response;
 					}
+				}
 
-					countdown(15,0);
-				});
-
-
-				//When a message is received
-				ws.addEventListener("message", event=> {
-					//event is an object which has properties, event.data would be the message that was received
-					console.log(event);
-
-
-					//dynamically creates a table for the upcoming race details using json objects from the HorseRace.java code running on its own server
-					function makeRaceDetailsTable() {
-    					let jsonData = JSON.parse(event.data);
-						//this is the table we want to populate
-						let tbody = document.querySelector("#raceTrackWeatherTable tbody");
-						let table1 = document.createElement("table");
-
-						for(var key in jsonData[0]){
-							if(jsonData[0].hasOwnProperty(key)){
-								const row = document.createElement('tr');
-								const keyCell = document.createElement('td');
-								const valueCell = document.createElement('td');
-							
-								keyCell.textContent = key;
-          						valueCell.textContent = jsonData[0][key];
-
-								row.appendChild(keyCell);
-          						row.appendChild(valueCell);
-								table1.appendChild(row);
-							}
-						}
-						tbody!.appendChild(table1);
+				async function pollRaceDetails() {
+					const response = await getCurrentGame();
 					
-						tbody = document.querySelector("#raceDetailsTable tbody");
-    					let table2 = document.createElement("table");
+					//this is the table we want to populate
+					let tbody = document.querySelector("#raceTrackWeatherTable tbody");
+					const table1 = document.createElement("table");
 
-
-						for(var i=1; i<jsonData.length; i++){
-							var isFirst = true;
-							for(var key in jsonData[i]){
-								if(jsonData[i].hasOwnProperty(key)){
-
-          							const keyCell = document.createElement('td');
-         							const valueCell = document.createElement('td');
-
-          							keyCell.textContent = key;
-
-									if(isFirst){
-										var wrap1 = document.createElement("span");
-										var textNode = document.createTextNode(jsonData[i][key]);
-										wrap1.appendChild(textNode);
-										wrap1.style.float = "left";
-
-										const button = document.createElement("button");
-										button.name = i.toString();
-
-										var wrap2 = document.createElement("span");
-										var arrow = document.createElement("span");
-										arrow.classList.add("dArrow");
-										button.style.marginTop = "3px";
-										button.appendChild(arrow);
-
-										button.addEventListener("click", function() {
-											showRows(button.name);
-										})
-
-										wrap2.appendChild(button);
-										wrap2.style.float = "right";
-									
-										valueCell.appendChild(wrap1);
-										valueCell.appendChild(wrap2);
-										isFirst = false;
-
-										const row = document.createElement('th');
-										row.appendChild(keyCell);
-          								row.appendChild(valueCell);
-										table2.appendChild(row);
-									}
-									else{
-										valueCell.textContent = jsonData[i][key];
-
-										const hiddenRow = document.createElement('tr');
-										hiddenRow.classList.add("hrow" + i);
-										hiddenRow.appendChild(keyCell);
-          								hiddenRow.appendChild(valueCell);
-										table2.appendChild(hiddenRow);
-
-									}
-								}
-							}
-						}
-						tbody!.appendChild(table2);
-  					}
-
-					function showRows(buttonName: string){
-						var i = parseInt(buttonName);
-						var hrows = document.querySelectorAll(".hrow"+i);
-						var nothrows = document.querySelectorAll(".nothrow"+i);
-						if(hrows.length == 0){
-							nothrows.forEach(row => {
-								row.className = "hrow"+i;
-							});
-						}
-						else{
-							hrows.forEach(row => {
-								row.className = "nothrow"+i;
-							});
-						}
-					}
-
-					//Almost exactly the same as the last table maker, but chooses a different spot on the page to make the table
-					function makeLastRaceResultTable(){
-						let jsonData = JSON.parse(event.data);
-
-						let tbody = document.querySelector("#lastRaceTrackWeatherTable tbody")
-						let table1 = document.createElement("table");
-
-						for(var key in jsonData[0]){
-							if(jsonData[0].hasOwnProperty(key)){
-								const row = document.createElement('tr');
-								const keyCell = document.createElement('td');
-								const valueCell = document.createElement('td');
+					// track info
+					const row = document.createElement('tr');
+					const keyCell = document.createElement('td');
+					const valueCell = document.createElement('td');
 							
-								keyCell.textContent = key;
-          						valueCell.textContent = jsonData[0][key];
+					keyCell.textContent = "Track";
+          			valueCell.textContent = response["track"]["track"];
 
-								row.appendChild(keyCell);
-          						row.appendChild(valueCell);
-								table1.appendChild(row);
-							}
-						}
-						tbody!.appendChild(table1);
+					row.appendChild(keyCell);
+          			row.appendChild(valueCell);
+					table1.appendChild(row);
 
-						tbody = document.querySelector("#lastRaceResultTable tbody");
-    					let table2 = document.createElement("table");
+					const row2 = document.createElement('tr');
+					const keyCell2 = document.createElement('td');
+					const valueCell2 = document.createElement('td');
+							
+					keyCell2.textContent = "Weather";
+          			valueCell2.textContent = response["track"]["weather"];
 
-						for(var i=1; i<jsonData.length; i++){
-							for(var key in jsonData[i]){
-								if(jsonData[i].hasOwnProperty(key)){
+					row.appendChild(keyCell2);
+          			row.appendChild(valueCell2);
+					table1.appendChild(row2);
 
-									//make new row
-									const row = document.createElement('tr');
-          							const keyCell = document.createElement('td');
-         							const valueCell = document.createElement('td');
+					tbody!.appendChild(table1);
 
-          							keyCell.textContent = key;
-									valueCell.textContent = jsonData[i][key];
+					tbody = document.querySelector("#raceDetailsTable tbody");
+    				let table2 = document.createElement("table");
+
+					const horses = response["horses"];
+
+					for (let i = 0; i < horses.length; i++) {
+						const horse = horses[i];
+						
+						const keyCell = document.createElement('td');
+         				const valueCell = document.createElement('td');
+
+						keyCell.textContent = "Name";
+						
+						var wrap1 = document.createElement("span");
+						var textNode = document.createTextNode(horse["name"]);
+						wrap1.appendChild(textNode);
+						wrap1.style.float = "left";
+
+						const button = document.createElement("button");
+						button.name = i.toString();
+
+						var wrap2 = document.createElement("span");
+						var arrow = document.createElement("span");
+						arrow.classList.add("dArrow");
+						button.style.marginTop = "3px";
+						button.appendChild(arrow);
+
+						button.addEventListener("click", function() {
+							alert(`Name: ${horse["name"]}\nAdvantageous Track: ${horse["advTrack"]}\nMane Style: ${horse["maneStyle"]}\nBreed: ${horse["race"]}\nInjuries: ${horse["injuries"]}\nTail Length: ${horse["tailLength"]} `)
+						});
+
+						wrap2.appendChild(button);
+						wrap2.style.float = "right";
+
+						valueCell.appendChild(wrap1);
+						valueCell.appendChild(wrap2);
+
+						const row = document.createElement('th');
+						row.appendChild(keyCell);
+						row.classList.add("throw" + i);
+		  				row.appendChild(valueCell);
+						table2.appendChild(row);
+					}
+					tbody!.appendChild(table2);
+				}
+
+				async function pollRaceResult() {
+					const previousRace = await getCurrentGame();
+
+					let tbody = document.querySelector("#lastRaceTrackWeatherTable tbody")
+					let table1 = document.createElement("table");
+					
+					const row = document.createElement('tr');
+					const keyCell = document.createElement('td');
+					const valueCell = document.createElement('td');
+
+					keyCell.textContent = "Winner";
+					valueCell.textContent = previousRace["winner"]["name"];
+					row.appendChild(keyCell);
+					row.appendChild(valueCell);
+					table1.appendChild(row);
+
+					tbody!.appendChild(table1);			
+				}
+
+				async function makeLastRaceResultTable() {
+					const response = await getPreviousGames();
+					
+					let tbody = document.querySelector("#allResultsTable tbody");
+    				let table = document.createElement("table");
+
+					Object.entries(response).forEach(([time, race]) => {
+						const row = document.createElement('tr');
+          				const keyCell = document.createElement('td');
+         				const valueCell = document.createElement('td');
+
+          				keyCell.textContent = new Date(Number(time)).toLocaleString();
+						valueCell.textContent = race["winner"]["name"];
 								
-									row.appendChild(keyCell);
-          							row.appendChild(valueCell);
-									//table consists of all rows
-									table2.appendChild(row);
-								}
-							}
-						}
-						tbody!.appendChild(table2);
-    				
+						row.appendChild(keyCell);
+          				row.appendChild(valueCell);
+						//table consists of all rows
+						table.appendChild(row);
+					});
+					tbody!.appendChild(table);
+				}
+
+				async function makeBetTable(){
+					const currentRace = await getCurrentGame();
+					
+					let tbody = document.querySelector("#betTable tbody");
+					let table = document.createElement("table");
+
+					const head = document.createElement('tr');
+					const cell1 = document.createElement('td');
+					const cell2 = document.createElement('td');
+					cell1.textContent = "Horse";
+					cell2.textContent = "Select";						
+					head.appendChild(cell1);
+					head.appendChild(cell2);
+					table.appendChild(head);
+
+					for (const horse of currentRace["horses"]) {
+						const row = document.createElement('tr');          					
+						const valueCell = document.createElement('td');
+						const checkCell = document.createElement('td');
+						const checkbox = document.createElement('input');
+						checkbox.type = 'checkbox';
+						checkbox.id = 'betCheckbox';
+						checkCell.appendChild(checkbox);
+						valueCell.textContent = horse["name"];
+       					row.appendChild(valueCell);
+						row.appendChild(checkCell);
+						//table consists of all rows
+						table.appendChild(row);
 					}
 
-					//creates the table with all the previous race results on server startup
-					function makeAllRaceResultsTable(){
-						let jsonData = JSON.parse(event.data);
-
-						let tbody = document.querySelector("#allResultsTable tbody");
-    					let table = document.createElement("table");
-
-						for(var i=0; i<jsonData.length; i++){
-							for(var key in jsonData[i]){
-								if(jsonData[i].hasOwnProperty(key)){
-									//make new row
-									const row = document.createElement('tr');
-          							const keyCell = document.createElement('td');
-         							const valueCell = document.createElement('td');
-
-          							keyCell.textContent = key;
-									valueCell.textContent = jsonData[i][key];
-								
-									row.appendChild(keyCell);
-          							row.appendChild(valueCell);
-									//table consists of all rows
-									table.appendChild(row);
-								}
-							}
-						}
-						tbody!.appendChild(table);
-					}
-
-					function makeBetTable(){
-						let jsonData = JSON.parse(event.data);
-						let tbody = document.querySelector("#betTable tbody");
-						let table = document.createElement("table");
-
-						const head = document.createElement('tr');
-						const cell1 = document.createElement('td');
-						const cell2 = document.createElement('td');
-						cell1.textContent = "Horse";
-						cell2.textContent = "Select";
-						head.appendChild(cell1);
-						head.appendChild(cell2);
-						table.appendChild(head);
-
-						for(var i=1; i<jsonData.length; i++){
-							const value = String(Object.values(jsonData[i])[0]);
-							//make new row
-							const row = document.createElement('tr');
-          					const valueCell = document.createElement('td');
-							const checkCell = document.createElement('td');
-							const checkbox = document.createElement('input');
-							checkbox.type = 'checkbox';
-							checkbox.id = 'betCheckbox';
-
-							checkCell.appendChild(checkbox);
-							valueCell.textContent = value;
-          					row.appendChild(valueCell);
-							row.appendChild(checkCell);
-							//table consists of all rows
-							table.appendChild(row);
-						}
-						tbody!.appendChild(table);
-						console.log("table created");
-					}
-
-					//adds a new row to the top of the allRaceResultsTable each time a winner is announced
-					function addNewRow(){
-
-					}
-
-					if(event.data.includes("dateTime")){
-						makeAllRaceResultsTable();
-					}
-					else if(!event.data.includes("winner")){
-						makeBetTable();
-						makeRaceDetailsTable();
-					}	
-					//the only other message we will be getting (so far 3/31/24) is one that tells us the winner
-					else{
-						makeLastRaceResultTable();
-						addNewRow();
-					}
-
-
-
-				});
-
+					tbody!.appendChild(table);
+					console.log("table created");
+				}
 			});
 
 		</script>

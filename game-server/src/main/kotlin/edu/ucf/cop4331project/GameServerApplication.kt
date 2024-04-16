@@ -20,6 +20,7 @@ import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.jwt.jwt
 import io.ktor.server.netty.EngineMain
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.response.respond
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
@@ -41,6 +42,10 @@ object GameServerApplication {
         // TODO: move this to commons
         install(ContentNegotiation) {
             json()
+        }
+
+        install(CORS) {
+            anyHost()
         }
 
         install(Authentication) {
