@@ -15,14 +15,14 @@ data class GameConfig(
         Horse("HorseJuan", "Desert", "braided", "Thoroughbred", 0, 1.0),
         Horse("Mississippi Queen", "E. Colonial", "curly", "Mississippi Queen", 0, 2.1),
         Horse("Guppie Dan", "Desert", "short", "Stockhorse", 0, 1.0),
-        Horse("Saul Hoofman", "Urban Street", "straight", "Quarter Horse", 1, 1.0),
+        Horse("Saul Hoofman", "Urban Street", "straight", "Quarter Horse", 1, 1.0)
     ),
     var tracks: Set<Track> = mutableSetOf(
         Track("Plains", "raining"),
         Track("Plains", "sunny"),
         Track("Desert", "raining"),
         Track("Desert", "sunny"),
-        Track("Urban Street", "raining")
+        Track("Urban Street", "raining"),
         Track("Urban Street", "sunny"),
         Track("E. Colonial", "raining"),
         Track("E. Colonial", "sunny")
