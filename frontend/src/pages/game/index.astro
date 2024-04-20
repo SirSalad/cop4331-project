@@ -1,0 +1,14 @@
+---
+import Layout from "@/layouts/Layout.astro"
+import { HorseTable } from "@/components/horseTable"
+import "@/styles/globals.css"
+import { GameViewSelector } from "@/components/gameViewSelector"
+
+---
+
+<html lang="en">
+    <Layout title="Hoof Hustler | Game">
+        <GameViewSelector value="horses" client:load/>
+        <HorseTable client:load/>
+    </Layout>
+</html>

@@ -13,7 +13,7 @@ import edu.ucf.cop4331project.container.Router
 import edu.ucf.cop4331project.util.jwtIssuer
 import edu.ucf.cop4331project.util.jwtSecret
 import io.ktor.http.HttpStatusCode
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.serialization.gson.gson
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
@@ -21,6 +21,7 @@ import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.jwt.jwt
 import io.ktor.server.netty.EngineMain
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.response.respond
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
@@ -45,7 +46,11 @@ object BackendApplication {
         injector = Guice.createInjector(ContainerModule(), BackendApplicationModule(this))
 
         install(ContentNegotiation) {
-            json()
+            gson()
+        }
+
+        install(CORS) {
+            anyHost()
         }
 
         install(Authentication) {

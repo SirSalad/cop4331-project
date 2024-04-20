@@ -1,13 +1,14 @@
 ---
-import { LoginForm } from "@/components/auth"
+import { SignUpForm } from "@/components/auth"
 import Layout from "@/layouts/Default.astro"
 import "@/styles/globals.css"
+
 ---
 
 <html lang="en">
-    <Layout title="Hoof Hustler | Log in">
+    <Layout title="Hoof Hustler | Sign Up">
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <LoginForm client:load/>
+            <SignUpForm client:load/>
         </div>
     </Layout>
 </html>

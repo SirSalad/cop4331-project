@@ -47,14 +47,26 @@ class GameController @Inject constructor(private val gameService: GameService) :
                 call.respond(status = HttpStatusCode.BadRequest, "Invalid amount")
                 return@post
             }
+            val horse = call.request.queryParameters["horse"] ?: run {
+                call.respond(status = HttpStatusCode.BadRequest, "Invalid horse")
+                return@post
+            }
+
+            val username = user?.payload?.getClaim("username")?.asString() ?: run {
+                call.respond(status = HttpStatusCode.BadRequest, "No user context provided")
+                return@post
+            }
 
             val request = java.net.http.HttpRequest.newBuilder(URI.create("http://localhost:8080/transaction"))
-                .header("amount", amount.toString())
-                .header("user", user?.payload?.getClaim("username")?.asString())
+                .header("amount", "-$amount")
+                .header("user", username)
                 .POST(BodyPublishers.noBody())
                 .build()
 
             val response = httpClient.send(request, BodyHandlers.ofString())
+            if (response.statusCode() == 200) {
+                gameService.bets.computeIfAbsent(username) { mutableMapOf(horse to amount) }
+            }
 
             call.respond(status = HttpStatusCode.OK, response)
         }

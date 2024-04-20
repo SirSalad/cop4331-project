@@ -48,6 +48,8 @@ class AuthenticationController @Inject constructor(private val application: Appl
             return@post
         }
 
+        request.coins = 500
+        request.isPremium = false
         userService.update(request)
 
         call.respond(status = HttpStatusCode.Created, "User created")

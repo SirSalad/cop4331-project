@@ -1,6 +1,4 @@
 ---
-import { Navbar } from '@/components/navbar';
-
 interface Props {
 	title: string;
 }
@@ -19,8 +17,7 @@ const { title } = Astro.props;
 		<title>{title}</title>
 	</head>
 	<body style="min-h-screen">
-        <Navbar token={Astro.cookies.get("token").value} client:load/>
-        <slot />
+		<slot />
 	</body>
 </html>
 <style is:global>

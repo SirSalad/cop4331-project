@@ -1,0 +1,14 @@
+---
+import Layout from "@/layouts/Layout.astro"
+import "@/styles/globals.css"
+import { GameViewSelector } from "@/components/gameViewSelector"
+import { PreviousRacesTable } from "@/components/previousRacesTable"
+
+---
+
+<html lang="en">
+    <Layout title="Hoof Hustler | Game">
+        <GameViewSelector value="previousRaces" client:load/>
+        <PreviousRacesTable token={Astro.cookies.get("token")?.value} client:load/>
+    </Layout>
+</html>

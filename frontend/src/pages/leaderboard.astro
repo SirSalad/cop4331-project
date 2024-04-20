@@ -1,0 +1,14 @@
+---
+import { Navbar } from "@/components/navbar"
+import { Leaderboard } from "@/components/leaderboard"
+import Layout from "@/layouts/Layout.astro"
+import "@/styles/globals.css"
+
+---
+
+<html lang="en">
+
+    <Layout title="Hoof Hustler | Leaderboard">
+        <Leaderboard token={Astro.cookies.get("token")?.value} client:load/>
+    </Layout>
+</html>

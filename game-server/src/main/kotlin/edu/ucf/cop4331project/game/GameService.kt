@@ -11,7 +11,12 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.Closeable
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse.BodyHandlers
 import java.util.TreeMap
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration.Companion.minutes
 
 @Singleton
@@ -21,6 +26,7 @@ class GameService @Inject constructor(private val configmanager: ConfigManager) 
     lateinit var currentGame: Game
     var time: Long = 0
     val previousGames: MutableMap<Long, Game> = TreeMap()
+    val bets = ConcurrentHashMap<String, Map<String, Int>>()
 
     private val gameJob: Job = CoroutineScope(Dispatchers.Default).launch {
         while (true) {
@@ -28,10 +34,26 @@ class GameService @Inject constructor(private val configmanager: ConfigManager) 
             val track = configmanager.getConfig(GameConfig::class.java).tracks.random()
             val game = Game(horses.toSet(), track)
 
+            bets.forEach { (user, bets) ->
+                if (game.winner.name in bets.keys) {
+                    val amount = bets[game.winner.name]!!
+
+                    val request = HttpRequest.newBuilder(URI.create("http://localhost:8080/transaction"))
+                        .header("amount", amount.toString())
+                        .header("user", user)
+                        .POST(HttpRequest.BodyPublishers.noBody())
+                        .build()
+                    launch {
+                        HttpClient.newHttpClient().send(request, BodyHandlers.discarding())
+                    }
+                }
+            }
+
             time = 10.minutes.inWholeMilliseconds
             currentGame = game
 
             previousGames[System.currentTimeMillis()] = game
+            bets.clear()
             delay(10.minutes)
         }
     }

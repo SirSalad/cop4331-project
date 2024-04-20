@@ -32,6 +32,7 @@ public class ContainerProcessor extends AbstractProcessor {
                 .filter(it -> it.getKind() == ElementKind.CLASS)
                 .map(it -> it.asType().toString())
                 .toList();
+        if (containers.isEmpty()) return false;
 
         processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Found %d containers".formatted(containers.size()));
 

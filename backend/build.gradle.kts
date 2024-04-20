@@ -6,7 +6,7 @@ plugins {
 dependencies {
     // Commons
     implementation("edu.ucf.cop4331project:jvm-common")
-    annotationProcessor("edu.ucf.cop4331project:jvm-common")
+    kapt("edu.ucf.cop4331project:jvm-common")
 
     // Kotlin platform
     implementation(kotlin("stdlib-jdk8"))
@@ -21,8 +21,9 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation")
     implementation("io.ktor:ktor-server-auth")
     implementation("io.ktor:ktor-server-auth-jwt")
-    implementation("io.ktor:ktor-serialization-kotlinx-json")
+    implementation("io.ktor:ktor-serialization-gson")
     implementation("io.ktor:ktor-server-config-yaml")
+    implementation("io.ktor:ktor-server-cors")
 
     // Persistence
     implementation("com.zaxxer:HikariCP:5.1.0")

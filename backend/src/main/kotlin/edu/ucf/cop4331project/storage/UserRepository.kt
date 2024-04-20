@@ -42,4 +42,10 @@ class UserRepository : IdTable<String>("user_repository") {
             it[premium] = user.isPremium
         }
     }
+
+    suspend fun all(): Sequence<User> = newSuspendedTransaction {
+        selectAll()
+            .map { row -> User(row[this@UserRepository.id].value, row[password], row[coins], row[premium]) }
+            .asSequence()
+    }
 }
