@@ -15,17 +15,27 @@ class Game(private val horses: Set<Horse>, private val track: Track) {
         val scores = horses.associateWith {
             var score = 0.0
 
-            if (track.track == it.advTrack) score += 1
+            if (track.track == it.advTrack) score += 15
             score -= it.injuries
             if (it.tailLength > 2.0) score += 5
 
-            if (track.weather == "rain") {
-                // add scores accoridngly
+            if (track.weather == "raining") {
+                when(it.name) {
+                    "Saul Hoofman" -> score += 5
+                    "Mississippi Queen" -> score += 5
+                    "Fasty McFast" -> score += 5
+                    "HorseJuan" -> score += 5
+                    "Guppie Dan" -> score += 5
+                }
             }
-            if (track.weather == "dry") {
-                // add scores accordingly
+            if (track.weather == "sunny") {
+                when(it.name) {
+                    "Horsune Miku" -> score += 5
+                    "Thimble" -> score += 5
+                    "Valkyrie" -> score += 5
+                    "Freddy Fazhorse" -> score += 5
+                }
             }
-
             score
         }
 
